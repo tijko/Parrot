@@ -1,0 +1,21 @@
+setup more error handling/logging & commenting
+
+remove redundant includes
+
+more detailed signal data passed (i.e. file name, type of access, time?(on signal handle side?), )
+
+log on interrupt signal
+
+method call to add file to parrot
+
+method call to rm file to parrot
+
+log on methods called
+
+how many clients connected?
+
+different kind of events --> signals
+
+properties???
+
+have a systemd service file on install?

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+
+<!-- Description for the D-Bus interface that Inotify will broadcast when
+     the watched directory/file has been modified. -->
+
+<node name="/org/Parrot">
+  <interface name="org.Parrot.Inotify">
+
+    <!-- Signal definitions -->
+
+    <!-- Changed(): returns a <str> broadcast when the watched file/directory
+         has been modified -->
+    <signal name="accessed">
+        <arg type="s" name="file_accessed" direction="out" />
+    </signal>
+
+  </interface>
+</node>

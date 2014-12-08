@@ -1,0 +1,10 @@
+[Unit]
+Description=Parrot file/directory notification backup dbus service.
+
+[Service]
+Type=dbus
+BusName=org.Parrot
+ExecStart=/usr/bin/parrot
+
+[Install]
+WantedBy=default.target
