@@ -21,8 +21,10 @@ GCC is required to compile, to install run in the base directory:
 
     [user@user ~]$ make
     [user@user ~]$ sudo make install
+    [user@user ~]$ make install-service
     [user@user ~]$ make clean
 
 and to uninstall:
 
     [user@user ~]$ sudo make uninstall
+    [user@user ~]$ make uninstall-service
