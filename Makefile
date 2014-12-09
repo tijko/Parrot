@@ -33,16 +33,17 @@ install:
 	cp $(CDIR)/systemd/dbus.conf /etc/systemd/system/user@.service.d/
 	cp $(CDIR)/conf/org.parrot.conf /etc/dbus-1/session.d/
 	cp $(CDIR)/systemd/parrot.service /etc/systemd/user/
+	systemctl --global enable dbus.socket
 
 install-service:
-	systemctl --user enable dbus.socket
-	systemctl --user enable parrot.service
 	systemctl --user daemon-reload
+	systemctl --user enable parrot.service
 	systemctl --user start dbus.socket
 	systemctl --user start dbus.service
 	systemctl --user start parrot.service
 
 uninstall:
+	systemctl --global disable dbus.socket
 	rm /etc/systemd/user/dbus.socket
 	rm /etc/systemd/user/dbus.service
 	rm -r /etc/systemd/system/user@.service.d/
@@ -52,8 +53,6 @@ uninstall:
 	rm $(POBJ)
 
 uninstall-service:
-	systemctl --user disable dbus.socket
-	systemctl --user disable parrot.service
 	systemctl --user stop dbus.socket
 	systemctl --user stop dbus.service
 	systemctl --user stop parrot.service
