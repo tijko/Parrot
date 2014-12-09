@@ -1,9 +1,9 @@
 [Unit]
 Description=Parrot file/directory notification backup dbus service.
+After=dbus.service
 
 [Service]
-Type=dbus
-BusName=org.Parrot
+Type=forking
 ExecStart=/usr/bin/parrot
 
 [Install]
