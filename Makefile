@@ -44,7 +44,6 @@ install-service:
 
 uninstall:
 	systemctl --global disable dbus.socket
-	systemctl --user disable parrot.service
 	rm /etc/systemd/user/dbus.socket
 	rm /etc/systemd/user/dbus.service
 	rm -r /etc/systemd/system/user@.service.d/
@@ -54,6 +53,7 @@ uninstall:
 	rm $(POBJ)
 
 uninstall-service:
+	systemctl --user disable parrot.service
 	systemctl --user stop dbus.socket
 	systemctl --user stop dbus.service
 	systemctl --user stop parrot.service
