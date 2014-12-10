@@ -10,3 +10,8 @@ void log_parrot(void)
 {
     sd_journal_print(LOG_INFO, "Parrot Started");
 }
+
+void log_dbus(char *addr)
+{
+    sd_journal_print(LOG_INFO, "Connect to DBus Address: %s", addr);
+}
