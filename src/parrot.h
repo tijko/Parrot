@@ -71,7 +71,10 @@ void log_err(const char *path);
 void sig_err(void);
 
 // Logs any errors associated with setting up the dbus connection.
-void dbus_err(int err);
+void dbus_conn_err(int err);
+
+// Logs any errors while returning the session bus address.
+void dbus_addr_err(void);
 
 // Logs any errors that occur during inotify_loop.
 void notify_err(void);
@@ -81,6 +84,9 @@ void log_evt(char *file, int mask);
 
 // Logs parrot being started.
 void log_parrot(void);
+
+// Logs the a successful dbus session connection
+void log_dbus(char *addr);
 
 // Signal handler to complete cleanup if any interrupts are received.
 void cleanup(int signo);
