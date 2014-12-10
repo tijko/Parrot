@@ -1,15 +1,13 @@
 #include <glib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-bindings.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
 #include "../parrot.h"
-
-//XXX testing...
-#include <stdlib.h>
 
 
 // Enumerate any signals to be defined, adding any new signals in before the
@@ -55,7 +53,7 @@ void register_parrot_obj(ParrotObject *p_obj)
     GError *err;
 
     guint result;
-    char *path, *name, *iface;
+    char *path, *name, *iface, *addr;
     
     mainloop = g_main_loop_new(NULL, FALSE);
     dbus_g_object_type_install_info(VALUE_TYPE_OBJECT, 
@@ -67,8 +65,17 @@ void register_parrot_obj(ParrotObject *p_obj)
 
     err = NULL;
     conn = dbus_g_bus_get(DBUS_BUS_SESSION, &err);
-    if (err != NULL) 
-        dbus_err(err->code);
+
+    if (err != NULL) {
+        dbus_conn_err(err->code);
+    } else {
+        addr = getenv("DBUS_SESSION_BUS_ADDRESS");
+
+        if (addr)
+            log_dbus(addr);
+        else
+            dbus_addr_err();
+    }
 
     dconn = dbus_g_connection_get_connection(conn);
 
@@ -82,4 +89,4 @@ void register_parrot_obj(ParrotObject *p_obj)
     dbus_g_connection_register_g_object(conn, path, G_OBJECT(p_obj));
 
     g_main_loop_run(mainloop);
-}   
+}
