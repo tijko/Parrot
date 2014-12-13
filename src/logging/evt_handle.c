@@ -15,3 +15,8 @@ void log_dbus(char *addr)
 {
     sd_journal_print(LOG_INFO, "Connect to DBus Address: %s", addr);
 }
+
+void log_backup(char *fn)
+{
+    sd_journal_print(LOG_INFO, "Backup: %s", fn);
+}
