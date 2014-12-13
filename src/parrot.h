@@ -7,14 +7,14 @@
 
 // Macro to set a directory to monitor for events. Edit to specify which 
 // directory to monitor.
-#define PARROT_PATH "/home/tijko/documents/learning/Cee_Ceeplus/" 
+#define PARROT_PATH "" 
 
 #define PARROT_SIZE strlen(PARROT_PATH) + 1
 
 // Macro to set a directory to backup the files from the directory above being 
 // monitored.
 // Edit to specify which directory to backup to.
-#define BACKUP_PATH "/home/tijko/documents/backups/backup_c/"
+#define BACKUP_PATH ""
 
 #define BACKUP_SIZE strlen(BACKUP_PATH) + 1
 
@@ -50,11 +50,11 @@ int notify_parrot(void);
 
 // Function to parse the inotify_event structs and pass on the relavent 
 // members.
-void parse_events(int e_status, char e_buf[]);
+void parse_events(int e_status, char e_buf[], ParrotObject *p_obj);
 
 // Walks the directory being monitored and calls the backup function when a 
 // file is found.
-void find_files(void);
+void find_files(char *file_accessed);
 
 char *create_pathname(char *dirname, char *filename, size_t pathsize);
 
@@ -84,6 +84,9 @@ void log_evt(char *file, int mask);
 
 // Logs parrot being started.
 void log_parrot(void);
+
+// Logs successful backup of file.
+void log_backup(char *fn);
 
 // Logs the a successful dbus session connection
 void log_dbus(char *addr);
