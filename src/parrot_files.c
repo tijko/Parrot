@@ -12,7 +12,7 @@
 #include "parrot.h"
 
 
-void find_files(void)
+void find_files(char *file_accessed)
 {
     char *pathname, *backupname;
     DIR *drect;
@@ -27,13 +27,15 @@ void find_files(void)
 
     while ((dir_files = readdir(drect))) {
 
-        if (dir_files->d_type == DT_REG) {
+        if (dir_files->d_type == DT_REG && !strcmp(dir_files->d_name, file_accessed)) {
             pathname = create_pathname(PARROT_PATH, dir_files->d_name, PARROT_SIZE);
             backupname = create_pathname(BACKUP_PATH, dir_files->d_name, BACKUP_SIZE);            
             backup_err = backup_files(pathname, backupname);
 
             if (backup_err) 
                 log_err(pathname);
+            else
+                log_backup(dir_files->d_name);
 
             free(pathname);
             free(backupname);
