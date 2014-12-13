@@ -15,16 +15,16 @@ int notify_parrot(void)
 {
     int fd, status, watch, change;
     
-    void *backup;
     char buffer[EVT_BUF_SIZE];
     ParrotObject *p_obj;
 
     fd_set watchfds;
     FD_ZERO(&watchfds);
-    pthread_t backup_file, parrot_dbus;
+    pthread_t parrot_dbus;
     log_parrot();
 
     p_obj = g_object_new(VALUE_TYPE_OBJECT, NULL);
+
     // thread to register the parrot object to dbus and contain the dbus
     // mainloop
     pthread_create(&parrot_dbus, NULL, (void *) register_parrot_obj, p_obj);
@@ -34,7 +34,7 @@ int notify_parrot(void)
         return -1;
     }
 
-    if ((watch = inotify_add_watch(fd, PARROT_PATH, IN_CLOSE_WRITE)) == -1) {
+    if ((watch = inotify_add_watch(fd, PARROT_PATH, IN_ACCESS)) == -1) {
         log_err(PARROT_PATH);
         return -1;
     }
@@ -53,13 +53,8 @@ int notify_parrot(void)
                 return -1;
             }
 
-            parse_events(status, buffer);
-            pthread_create(&backup_file, NULL, (void *) find_files, NULL);
-            pthread_join(backup_file, &backup);
+            parse_events(status, buffer, p_obj);
 
-            parrot_obj_accessed(p_obj);            
-            if (backup) 
-                log_err(PARROT_PATH);
         }
     }
 
@@ -76,13 +71,30 @@ int events_in(int highest_fd, fd_set *watchfds)
     return available;
 }
 
-void parse_events(int e_status, char e_buf[])
+void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 {
-    int events = 0;
+    int events;
     struct inotify_event *event;
+    void *backup;
+    pthread_t backup_file;
+
+    events = 0;
+
     while (events < e_status) { 
         event = (struct inotify_event *) &e_buf[events];
+
+        if (event->mask != IN_ACCESS)
+            return;
+
         log_evt(event->name, event->mask);
+
+        pthread_create(&backup_file, NULL, (void *) find_files, event->name);
+        pthread_join(backup_file, &backup);
+        parrot_obj_accessed(p_obj);            
+
+        if (backup) 
+            log_err(PARROT_PATH);
+
         events += EVT_SIZE + event->len;
     }
 }
