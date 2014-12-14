@@ -22,7 +22,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE(ParrotObject, parrot_obj, G_TYPE_OBJECT);
 
-gboolean parrot_obj_accessed(ParrotObject *p_obj);
+gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 
 #include "parrot_object.h"
 
@@ -35,12 +35,12 @@ static void parrot_obj_class_init(ParrotObjectClass *klass)
     signals[NOTIFY_SIGNAL] =
         g_signal_new("accessed", G_OBJECT_CLASS_TYPE (klass),
         G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED, 0, NULL, NULL,
-        g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1, G_TYPE_STRING);
+        g_cclosure_marshal_VOID__INT, G_TYPE_NONE, 1, G_TYPE_INT);
 }
 
-gboolean parrot_obj_accessed(ParrotObject *p_obj)
+gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time)
 {
-    g_signal_emit(p_obj, signals[NOTIFY_SIGNAL], 0, "file_accessed");
+    g_signal_emit(p_obj, signals[NOTIFY_SIGNAL], 0, access_time);
     return TRUE;
 }
 
