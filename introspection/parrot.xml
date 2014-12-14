@@ -11,10 +11,10 @@
 
     <!-- Signal definitions -->
 
-    <!-- Changed(): returns a <str> broadcast when the watched file/directory
-         has been modified -->
+    <!-- accessed(): returns an <int> broadcast of seconds since the epoch, when 
+         the watched file/directory has been accessed -->
     <signal name="accessed">
-        <arg type="s" name="file_accessed" direction="out" />
+        <arg type="i" direction="out" />
     </signal>
 
   </interface>
