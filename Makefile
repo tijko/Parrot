@@ -59,5 +59,5 @@ uninstall-service:
 	systemctl --user stop parrot.service
 
 clean:
-	rm $(TARGET)
 	rm $(POBJ)
+	rm $(TARGET)
