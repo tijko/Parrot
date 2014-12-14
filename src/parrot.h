@@ -3,18 +3,19 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <dirent.h>
+#include <time.h>
 
 
 // Macro to set a directory to monitor for events. Edit to specify which 
 // directory to monitor.
-#define PARROT_PATH "" 
+#define PARROT_PATH "/home/tijko/documents/learning/Cee_Ceeplus/" 
 
 #define PARROT_SIZE strlen(PARROT_PATH) + 1
 
 // Macro to set a directory to backup the files from the directory above being 
 // monitored.
 // Edit to specify which directory to backup to.
-#define BACKUP_PATH ""
+#define BACKUP_PATH "/home/tijko/documents/backups/backup_c/"
 
 #define BACKUP_SIZE strlen(BACKUP_PATH) + 1
 
@@ -39,7 +40,7 @@ GType parrot_obj_get_type(void);
 
 #define VALUE_TYPE_OBJECT (parrot_obj_get_type())
 
-gboolean parrot_obj_accessed(ParrotObject *p_obj);
+gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 
 // Creates the daemon.
 int parrot_daemon(void);
