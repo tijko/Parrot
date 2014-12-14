@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
+
 import dbus.service
 from gi.repository import GObject
 from dbus.mainloop.glib import DBusGMainLoop
 
 
-def callback(msg):
-    print msg
+def callback(access_time):
+    print time.ctime(access_time)
 
 def parrot_proxy():
     conn = dbus.bus.BusConnection(
