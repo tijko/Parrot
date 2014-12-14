@@ -76,13 +76,15 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
     int events;
     struct inotify_event *event;
     void *backup;
+    time_t access_time;
+
     pthread_t backup_file;
 
     events = 0;
 
     while (events < e_status) { 
         event = (struct inotify_event *) &e_buf[events];
-
+        access_time = time(NULL);
         if (event->mask != IN_ACCESS)
             return;
 
@@ -90,7 +92,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 
         pthread_create(&backup_file, NULL, (void *) find_files, event->name);
         pthread_join(backup_file, &backup);
-        parrot_obj_accessed(p_obj);            
+        parrot_obj_accessed(p_obj, (int) access_time);            
 
         if (backup) 
             log_err(PARROT_PATH);
