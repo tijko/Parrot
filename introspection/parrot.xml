@@ -12,7 +12,7 @@
     <!-- Signal definitions -->
 
     <!-- accessed(): returns an <int> broadcast of seconds since the epoch, when 
-         the watched file/directory has been accessed -->
+         any file in the watched directory has been accessed -->
     <signal name="accessed">
         <arg type="i" direction="out" />
     </signal>
