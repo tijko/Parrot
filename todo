@@ -1,21 +1,22 @@
 setup more error handling/logging & commenting
 
-remove redundant includes
-
-more detailed signal data passed (i.e. file name, type of access, time?(on signal handle side?), )
+more detailed signal data passed (i.e. file name, type of access)
+    [on this signal data] :: have a protocol? 
+        
+        - where there is a timestamp and other meta data about the change and specific file.
 
 log on interrupt signal
 
-method call to add file to parrot
-
-method call to rm file to parrot
+method call to add file to parrot -> passes an argument
+method call to list directory to parrot -> returns an array of strings
+method call to rm file to parrot -> passes an argument
 
 log on methods called
 
 how many clients connected?
 
 different kind of events --> signals
+    different signals to different events
+    logging of each specific event
 
 properties???
-
-have a systemd service file on install?
