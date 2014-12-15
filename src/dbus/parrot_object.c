@@ -1,6 +1,5 @@
 #include <glib.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib.h>
