@@ -11,7 +11,8 @@
 
     <!-- Method definitions -->
     
-    <!-- Foo! this is a test for a dummy function -->
+    <!-- current_watch(): returns a <str> of the currently watched file or
+         directory defined in parrot.h -->
     <method name="current_watch">
         <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
         <arg type="s" name="watch" direction="out" />
