@@ -20,6 +20,14 @@ def parrot_proxy():
     proxy = conn.get_object(bus.get_name(), '/org/Parrot')
     proxy.connect_to_signal('accessed', callback, 
                             dbus_interface='org.Parrot.Inotify')
+
+    watch_method = proxy.get_dbus_method('current_watch')
+    print "Calling 'current_watch' method..."
+    cur_watch = watch_method() 
+    print "Currently watched: %s" % cur_watch
+
+    print "Waiting on signal 'accessed'..."
+    
     loop = GObject.MainLoop()
     loop.run()
 
