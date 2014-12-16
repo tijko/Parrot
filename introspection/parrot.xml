@@ -9,12 +9,20 @@
 <node name="/org/Parrot">
   <interface name="org.Parrot.Inotify">
 
+    <!-- Method definitions -->
+    
+    <!-- Foo! this is a test for a dummy function -->
+    <method name="current_watch">
+        <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+        <arg type="s" name="watch" direction="out" />
+    </method>
+
     <!-- Signal definitions -->
 
     <!-- accessed(): returns an <int> broadcast of seconds since the epoch, when 
          any file in the watched directory has been accessed -->
     <signal name="accessed">
-        <arg type="i" direction="out" />
+        <arg type="i" name="access_time" direction="out" />
     </signal>
 
   </interface>
