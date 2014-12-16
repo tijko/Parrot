@@ -43,6 +43,9 @@ GType parrot_obj_get_type(void);
 
 gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 
+gboolean parrot_obj_current_watch(ParrotObject *p_obj,
+                                  DBusGMethodInvocation *ctxt);
+
 // Creates the daemon.
 int parrot_daemon(void);
 
