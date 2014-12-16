@@ -22,6 +22,8 @@ static guint signals[LAST_SIGNAL] = { 0 };
 G_DEFINE_TYPE(ParrotObject, parrot_obj, G_TYPE_OBJECT);
 
 gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
+gboolean parrot_obj_current_watch(ParrotObject *p_obj, 
+                                  DBusGMethodInvocation *ctxt);
 
 #include "parrot_object.h"
 
@@ -40,6 +42,18 @@ static void parrot_obj_class_init(ParrotObjectClass *klass)
 gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time)
 {
     g_signal_emit(p_obj, signals[NOTIFY_SIGNAL], 0, access_time);
+    return TRUE;
+}
+
+gboolean parrot_obj_current_watch(ParrotObject *p_obj, 
+                                  DBusGMethodInvocation *ctxt)
+{
+    char *sender;
+
+    sender = dbus_g_method_get_sender(ctxt);
+    dbus_g_method_return(ctxt, PARROT_PATH);
+
+    g_free(sender);
     return TRUE;
 }
 
