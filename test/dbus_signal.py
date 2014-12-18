@@ -22,6 +22,9 @@ def parrot_proxy():
                             dbus_interface='org.Parrot.Inotify')
 
     watch_method = proxy.get_dbus_method('current_watch')
+    add_watch = proxy.get_dbus_method('add_watch')
+    print "Calling 'add_watch' method..."
+    add_watch('/home/tijko/vim-profile/')
     print "Calling 'current_watch' method..."
     cur_watch = watch_method() 
     print "Currently watched: %s" % cur_watch
