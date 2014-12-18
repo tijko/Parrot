@@ -9,7 +9,7 @@
 #include "parrot.h"
 
 
-void find_files(char *file_accessed)
+void find_files(struct watch_trigger *accessed)
 {
     char *pathname, *backupname;
     DIR *drect;
@@ -17,18 +17,16 @@ void find_files(char *file_accessed)
     
     struct dirent *dir_files;
 
-    if ((drect = opendir(PARROT_PATH)) == NULL) 
-        log_err(PARROT_PATH);        
-
-    dir_files = malloc(sizeof *dir_files);
+    if ((drect = opendir(accessed->dir)) == NULL) 
+        log_err("OPENDIR"); 
 
     while ((dir_files = readdir(drect))) {
 
-        if (dir_files->d_type == DT_REG && !strcmp(dir_files->d_name, file_accessed)) {
-            pathname = create_pathname(PARROT_PATH, dir_files->d_name, PARROT_SIZE);
+        if (dir_files->d_type == DT_REG && !strcmp(dir_files->d_name, accessed->file)) {
+            pathname = create_pathname(accessed->dir, dir_files->d_name, 
+                                                   strlen(accessed->dir) + 1);
             backupname = create_pathname(BACKUP_PATH, dir_files->d_name, BACKUP_SIZE);            
             backup_err = backup_files(pathname, backupname);
-
             if (backup_err) 
                 log_err(pathname);
             else
@@ -38,8 +36,6 @@ void find_files(char *file_accessed)
             free(backupname);
        }
     }
-
-    free(dir_files);
 }
 
 char *create_pathname(char *dirname, char *filename, size_t pathsize)
@@ -60,19 +56,19 @@ int backup_files(char *file_path, char *backup_path)
     int r_file, f_read, w_file;
 
     if ((r_file = open(file_path, O_RDONLY)) == -1) {
-        log_err(file_path);
+        log_err("OPEN_R BACKUP");
         return errno;
     }
 
     void *fd_buffer = malloc(sizeof(char) * file_size);
 
     if ((f_read = read(r_file, fd_buffer, file_size)) == -1) {
-        log_err(file_path);
+        log_err("READ BACKUP");
         return errno;
     }
 
     if ((w_file = open(backup_path, O_CREAT | O_RDWR, 0644)) == -1) {
-        log_err(file_path);
+        log_err("OPEN_W BACKUP");
         return errno;
     }
 
