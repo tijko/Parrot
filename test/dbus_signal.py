@@ -8,10 +8,17 @@ from gi.repository import GObject
 from dbus.mainloop.glib import DBusGMainLoop
 
 
+# user test path: edit this variable to hold any watch you'd like to test
+user_test_path = ''
+
+
 def callback(access_time):
     print time.ctime(access_time)
 
 def parrot_proxy():
+    if not user_test_path:
+        print 'Error: must set "user_test_path" to valid path'
+        return
     conn = dbus.bus.BusConnection(
                     'unix:path=/run/user/1000/dbus/user_bus_socket',
                      mainloop=DBusGMainLoop()
@@ -24,7 +31,7 @@ def parrot_proxy():
     watch_method = proxy.get_dbus_method('current_watch')
     add_watch = proxy.get_dbus_method('add_watch')
     print "Calling 'add_watch' method..."
-    add_watch('/home/tijko/vim-profile/')
+    add_watch(user_test_path)
     print "Calling 'current_watch' method..."
     cur_watch = watch_method() 
     print "Currently watched: %s" % cur_watch
