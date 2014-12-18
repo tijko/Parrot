@@ -25,6 +25,9 @@ gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 gboolean parrot_obj_current_watch(ParrotObject *p_obj, 
                                   DBusGMethodInvocation *ctxt);
 
+gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
+                               DBusGMethodInvocation *ctxt);
+
 #include "parrot_object.h"
 
 static void parrot_obj_init(ParrotObject *p_obj)
@@ -51,9 +54,23 @@ gboolean parrot_obj_current_watch(ParrotObject *p_obj,
     char *sender;
 
     sender = dbus_g_method_get_sender(ctxt);
-    dbus_g_method_return(ctxt, PARROT_PATH);
+    dbus_g_method_return(ctxt, "foo");
 
     g_free(sender);
+    return TRUE;
+}
+
+gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
+                              DBusGMethodInvocation *ctxt)
+{
+    char *sender;
+
+    sender = dbus_g_method_get_sender(ctxt);
+    g_free(sender);
+
+    parrot_add_watch((char *) watch);
+    dbus_g_method_return(ctxt);
+
     return TRUE;
 }
 
