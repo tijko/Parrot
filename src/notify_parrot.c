@@ -10,16 +10,11 @@
 #include "parrot.h"
 
 
-int notify_parrot(void) 
+int notify_parrot_init(void) 
 {
-    int fd, status, watch, change;
-    
-    char buffer[EVT_BUF_SIZE];
     ParrotObject *p_obj;
-
-    fd_set watchfds;
-    FD_ZERO(&watchfds);
     pthread_t parrot_dbus;
+
     log_parrot();
 
     p_obj = g_object_new(VALUE_TYPE_OBJECT, NULL);
@@ -28,36 +23,66 @@ int notify_parrot(void)
     // mainloop
     pthread_create(&parrot_dbus, NULL, (void *) register_parrot_obj, p_obj);
 
-    if ((fd = inotify_init()) == -1) {
-        log_err(PARROT_PATH);
+    if ((parrot_inotify_instance = inotify_init()) == -1) {
+        log_err("INOTIFY_INIT");
         return -1;
     }
 
-    if ((watch = inotify_add_watch(fd, PARROT_PATH, IN_ACCESS)) == -1) {
-        log_err(PARROT_PATH);
-        return -1;
-    }
-
-    while (true) {
-        FD_SET(fd, &watchfds);
-        change = events_in(fd + 1, &watchfds);
-        FD_ZERO(&watchfds);
-
-        if (change == -1) {
-            log_err("SELECT CALL");
-            return -1;
-        } else if (change) {
-            if ((status = read(fd, buffer, EVT_BUF_SIZE)) < 0) {
-                log_err(PARROT_PATH);
-                return -1;
-            }
-
-            parse_events(status, buffer, p_obj);
-
-        }
-    }
+    watch_num = 0;
+    parrot_mainloop(p_obj);
 
     return 0;
+}
+
+void parrot_mainloop(ParrotObject *p_obj)
+{
+    int change, status;
+    char buffer[EVT_BUF_SIZE];
+
+    fd_set watchfds;
+    FD_ZERO(&watchfds);
+
+    while (true) {
+
+	FD_SET(parrot_inotify_instance, &watchfds);
+	change = events_in(parrot_inotify_instance + 1, &watchfds);
+	FD_ZERO(&watchfds);
+
+	if (change == -1) {
+	    log_err("SELECT CALL");
+	    return;
+	} else if (change) {
+	    if ((status = read(parrot_inotify_instance, 
+                               buffer, EVT_BUF_SIZE)) < 0) {
+		log_err("READ CALL");
+		return;
+	    }
+
+	    parse_events(status, buffer, p_obj);
+
+	}
+    }
+}
+
+void parrot_add_watch(char *path)
+{
+    int watch;
+    struct parrot_watch *new_watch;
+
+    new_watch = malloc(sizeof *new_watch);
+
+    if ((watch = inotify_add_watch(parrot_inotify_instance, 
+                                   path, IN_ACCESS)) == -1) {
+        log_err("INOTIFY_ADD_WATCH");
+        return;
+    }
+
+    new_watch->dir = malloc(sizeof(char) * strlen(path));
+    strcpy(new_watch->dir, path);
+    new_watch->parrot_wd = watch;
+
+    current_watch[watch_num++] = new_watch;
+    // XXX -> add log function
 }
 
 int events_in(int highest_fd, fd_set *watchfds)
@@ -72,14 +97,17 @@ int events_in(int highest_fd, fd_set *watchfds)
 
 void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 {
-    int events;
+    int events, cur_watch;
     struct inotify_event *event;
+    struct watch_trigger *accessed;
+
     void *backup;
     time_t access_time;
 
     pthread_t backup_file;
 
     events = 0;
+    accessed = malloc(sizeof *accessed);
 
     while (events < e_status) { 
         event = (struct inotify_event *) &e_buf[events];
@@ -89,12 +117,20 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 
         log_evt(event->name, event->mask);
 
-        pthread_create(&backup_file, NULL, (void *) find_files, event->name);
+        for (cur_watch=0; cur_watch < watch_num; cur_watch++) {
+            if (current_watch[cur_watch]->parrot_wd == event->wd) {
+                accessed->dir = current_watch[cur_watch]->dir;
+                accessed->file = event->name;
+                break;
+            }
+        }
+
+        pthread_create(&backup_file, NULL, (void *) find_files, accessed);
         pthread_join(backup_file, &backup);
         parrot_obj_accessed(p_obj, (int) access_time);            
 
         if (backup) 
-            log_err(PARROT_PATH);
+            log_err("BACKUP");
 
         events += EVT_SIZE + event->len;
     }
