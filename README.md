@@ -6,14 +6,12 @@ directory and copys those files to a backup directory.
 
 ####setup
 
-Edit the `interface.h` header file with the path to the directory or file you 
-wish to Parrot and the path to where you want to backup to.
+Edit the `parrot.h` header file with the path to the directory or file you 
+wish to backup to.
 
 Be sure to include a trailing `/` on the pathname:
 
-    /home/user/path/to/backup/ <-- here
-
-on both pathnames, the backup pathname and the directory being backed up to.
+    /home/user/path/to/backup_to/ <-- here
 
 ####install
 
