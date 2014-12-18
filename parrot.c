@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     if (notify_flag == -1)
         notify_err();
 
-    notify_flag = notify_parrot();
+    notify_flag = notify_parrot_init();
 
     if (notify_flag == -1)
         notify_err();
