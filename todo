@@ -7,7 +7,6 @@ more detailed signal data passed (i.e. file name, type of access)
 
 log on interrupt signal
 
-method call to add file to parrot -> passes an argument
 method call to list directory to parrot -> returns an array of strings
 method call to rm file to parrot -> passes an argument
 
