@@ -22,11 +22,15 @@ static guint signals[LAST_SIGNAL] = { 0 };
 G_DEFINE_TYPE(ParrotObject, parrot_obj, G_TYPE_OBJECT);
 
 gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
+
 gboolean parrot_obj_current_watches(ParrotObject *p_obj, 
                                     DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
-                               DBusGMethodInvocation *ctxt);
+                              DBusGMethodInvocation *ctxt);
+
+gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
+                                 DBusGMethodInvocation *ctxt);
 
 #include "parrot_object.h"
 
@@ -75,12 +79,26 @@ gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
     char *sender;
 
     sender = dbus_g_method_get_sender(ctxt);
-    g_free(sender);
 
     parrot_add_watch((char *) watch);
     dbus_g_method_return(ctxt);
 
+    g_free(sender);
     return TRUE;
+}
+
+gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
+                                 DBusGMethodInvocation *ctxt)
+{
+    char *sender;
+
+    sender = dbus_g_method_get_sender(ctxt);
+
+    parrot_remove_watch(watch);
+    dbus_g_method_return(ctxt);
+
+    g_free(sender);
+    return TRUE;    
 }
 
 void register_parrot_obj(ParrotObject *p_obj)
