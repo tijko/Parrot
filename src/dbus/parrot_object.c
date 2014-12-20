@@ -22,8 +22,8 @@ static guint signals[LAST_SIGNAL] = { 0 };
 G_DEFINE_TYPE(ParrotObject, parrot_obj, G_TYPE_OBJECT);
 
 gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
-gboolean parrot_obj_current_watch(ParrotObject *p_obj, 
-                                  DBusGMethodInvocation *ctxt);
+gboolean parrot_obj_current_watches(ParrotObject *p_obj, 
+                                    DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
                                DBusGMethodInvocation *ctxt);
@@ -48,13 +48,22 @@ gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time)
     return TRUE;
 }
 
-gboolean parrot_obj_current_watch(ParrotObject *p_obj, 
-                                  DBusGMethodInvocation *ctxt)
+gboolean parrot_obj_current_watches(ParrotObject *p_obj, 
+                                    DBusGMethodInvocation *ctxt)
 {
+    int watch;
+
     char *sender;
+    char **current_watches;
 
     sender = dbus_g_method_get_sender(ctxt);
-    dbus_g_method_return(ctxt, "foo");
+    current_watches = g_new(char *, watch_num + 1);
+
+    for (watch=0; watch < watch_num; watch++)
+        current_watches[watch] = g_strdup(current_watch[watch]->dir);
+
+    current_watches[watch] = NULL;
+    dbus_g_method_return(ctxt, current_watches);
 
     g_free(sender);
     return TRUE;
