@@ -10,7 +10,7 @@
 // Macro to set a directory to backup the files from the directory above being 
 // monitored.
 // Edit to specify which directory to backup to.
-#define BACKUP_PATH "/home/tijko/Documents/backup/"
+#define BACKUP_PATH "/home/tijko/documents/backups/backup_c/"
 
 #define BACKUP_SIZE strlen(BACKUP_PATH) + 1
 
@@ -52,11 +52,12 @@ GType parrot_obj_get_type(void);
 
 gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 
-gboolean parrot_obj_current_watch(ParrotObject *p_obj,
-                                  DBusGMethodInvocation *ctxt);
+gboolean parrot_obj_current_watches(ParrotObject *p_obj,
+                                    DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_method_arg(ParrotObject *p_obj, char *fn,
 			       DBusGMethodInvocation *ctxt);
+
 // Creates the daemon.
 int parrot_daemon(void);
 
