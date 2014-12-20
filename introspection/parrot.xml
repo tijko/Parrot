@@ -13,9 +13,9 @@
     
     <!-- current_watch(): returns a <str> of the currently watched file or
          directory defined in parrot.h -->
-    <method name="current_watch">
+    <method name="current_watches">
         <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
-        <arg type="s" name="watch" direction="out" />
+        <arg type="as" name="watch" direction="out" />
     </method>
 
     <!-- add_watch(): creates a new watch for the provided directory or 
