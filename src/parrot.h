@@ -55,8 +55,11 @@ gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 gboolean parrot_obj_current_watches(ParrotObject *p_obj,
                                     DBusGMethodInvocation *ctxt);
 
-gboolean parrot_obj_method_arg(ParrotObject *p_obj, char *fn,
-			       DBusGMethodInvocation *ctxt);
+gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
+			                  DBusGMethodInvocation *ctxt);
+
+gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
+                                 DBusGMethodInvocation *ctxt);
 
 // Creates the daemon.
 int parrot_daemon(void);
@@ -66,6 +69,8 @@ int parrot_daemon(void);
 int notify_parrot_init(void);
 
 void parrot_add_watch(char *path);
+
+void parrot_remove_watch(char *path);
 
 void parrot_mainloop(ParrotObject *p_obj);
 
