@@ -85,6 +85,28 @@ void parrot_add_watch(char *path)
     // XXX -> add log function
 }
 
+void parrot_remove_watch(char *path)
+{
+    int watch, idx;
+
+    for (watch=0; watch < watch_num; watch++) {
+        if (!strcmp(path, current_watch[watch]->dir)) {
+            free(current_watch[watch]->dir);
+            free(current_watch[watch]);
+            break;
+        }
+    }
+
+    if (watch != watch_num) {
+        for (watch=0, idx=0; watch < watch_num; watch++) {
+            if (current_watch[watch])
+                current_watch[idx++] = current_watch[watch];
+        }                 
+
+        watch_num--;
+    }                
+}
+
 int events_in(int highest_fd, fd_set *watchfds)
 {
     int available;
