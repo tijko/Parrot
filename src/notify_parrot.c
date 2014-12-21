@@ -93,12 +93,13 @@ void parrot_remove_watch(char *path)
         if (!strcmp(path, current_watch[watch]->dir)) {
             free(current_watch[watch]->dir);
             free(current_watch[watch]);
+            current_watch[watch] = NULL;
             break;
         }
     }
 
-    if (watch != watch_num) {
-        for (watch=0, idx=0; watch < watch_num; watch++) {
+    if (watch < watch_num) {
+        for (idx=watch; watch < watch_num; watch++) {
             if (current_watch[watch])
                 current_watch[idx++] = current_watch[watch];
         }                 
