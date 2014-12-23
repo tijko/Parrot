@@ -1,18 +1,12 @@
 setup more error handling/logging & commenting
+log on interrupt signal
+log on methods called
+how many clients connected?
 
 more detailed signal data passed (i.e. file name, type of access)
     [on this signal data] :: have a protocol? 
-        
+                    ==-- DBUS HANDLES THIS PROTOCOL --== (nice thought though if this were under some independent ipc method)        
         - where there is a timestamp and other meta data about the change and specific file.
-
-log on interrupt signal
-
-method call to list directory to parrot -> returns an array of strings
-method call to rm file to parrot -> passes an argument
-
-log on methods called
-
-how many clients connected?
 
 different kind of events --> signals
     different signals to different events
