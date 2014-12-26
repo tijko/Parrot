@@ -1,8 +1,9 @@
 Parrot
 ======
 
-Parrot runs as a daemon catching any write events on a specific file or 
-directory and copys those files to a backup directory.
+On install Parrot runs as a systemd unit daemon and made available as a dbus
+service.  Parrots dbus services offer signals and methods that will aid in
+backing up files or signalling on events.
 
 ####setup
 
