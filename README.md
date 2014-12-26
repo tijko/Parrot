@@ -9,11 +9,18 @@ backing up files or signalling on events.
 
 ![ScreenShot](/screenshots/parrot_dfeet.img)
 
-The screenshot above shows an instance of Parrot on the d-feet (a dbus utility 
+The screenshot above shows an instance of Parrot on d-feet (a dbus utility 
 program).  Once a Parrot watch is set on a directory, anytime a file in that 
 directory is opened Parrot will make a backup of that file before any changes
 occur.  That way if any mistakes are written to that file and saved, there will
 be a backup of the file before those changes took place.
+
+In addition to backing up files, Parrot functions in helping log when those 
+changes/accesses in the Parrot'd directory occur.  By subscribing to Parrot's
+`accessed` signal, Parrot will broadcast a signal in the form of seconds since
+the epoch whenever a file in the watch directory is accessed.  This signal can
+easily be logged in whatever form needed or other kinds of actions can be 
+taken such as callbacks to extend any additional functionality needed.
 
 ####usage
 
