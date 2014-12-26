@@ -9,12 +9,18 @@ backing up files or signalling on events.
 
 ![ScreenShot](/screenshots/parrot_dfeet.img)
 
+The screenshot above shows an instance of Parrot on the d-feet (a dbus utility 
+program).  Once a Parrot watch is set on a directory, anytime a file in that 
+directory is opened Parrot will make a backup of that file before any changes
+occur.  That way if any mistakes are written to that file and saved, there will
+be a backup of the file before those changes took place.
+
 ####usage
 
 
 ####setup
 
-Edit the `parrot.h` header file with the path to the directory or file you 
+Edit the `parrot.h` header file with the path to the directory you 
 wish to backup to.
 
 Be sure to include a trailing `/` on the pathname:
