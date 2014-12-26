@@ -20,7 +20,7 @@ changes/accesses in the Parrot'd directory occur.  By subscribing to Parrot's
 `accessed` signal, Parrot will broadcast a signal in the form of seconds since
 the epoch whenever a file in the watch directory is accessed.  This signal can
 easily be logged in whatever form needed or other kinds of actions can be 
-taken such as callbacks to extend any additional functionality needed.
+taken such as callbacks to extend any additional functionality.
 
 ####usage
 
