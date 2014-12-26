@@ -1,9 +1,14 @@
 Parrot
 ======
 
+####description
+
 On install Parrot runs as a systemd unit daemon and made available as a dbus
-service.  Parrots dbus services offer signals and methods that will aid in
+service.  Parrot's dbus service offers signals and methods that will aid in
 backing up files or signalling on events.
+
+####usage
+
 
 ####setup
 
