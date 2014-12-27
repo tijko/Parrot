@@ -3,9 +3,9 @@ Parrot
 
 ####description
 
-On install Parrot runs as a systemd unit daemon and made available as a dbus
-service.  Parrot's dbus service offers signals and methods that will aid in
-backing up files or signalling on events.
+Parrot runs as a systemd user service and also a dbus service.  Parrot's dbus 
+service capabilities offer signals and methods that allow you to remotely set 
+up watches to back up files and/or signal on events.
 
 ![ScreenShot](/screenshots/parrot_dfeet.img)
 
@@ -19,8 +19,9 @@ In addition to backing up files, Parrot functions in helping log when those
 changes/accesses in the Parrot'd directory occur.  By subscribing to Parrot's
 `accessed` signal, Parrot will broadcast a signal in the form of seconds since
 the epoch whenever a file in the watch directory is accessed.  This signal can
-easily be logged in whatever form needed or other kinds of actions can be 
-taken such as callbacks to extend any additional functionality.
+easily be logged in whatever form needed or some other form of action can be 
+take place such as callbacks to extend any additional functionality that might
+be called for.
 
 ####usage
 
