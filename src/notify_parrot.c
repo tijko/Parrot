@@ -44,24 +44,26 @@ void parrot_mainloop(ParrotObject *p_obj)
 
     while (true) {
 
-	FD_SET(parrot_inotify_instance, &watchfds);
-	change = events_in(parrot_inotify_instance + 1, &watchfds);
-	FD_ZERO(&watchfds);
+        FD_SET(parrot_inotify_instance, &watchfds);
+        change = events_in(parrot_inotify_instance + 1, &watchfds);
+        FD_ZERO(&watchfds);
 
-	if (change == -1) {
-	    log_err("SELECT CALL");
-	    return;
-	} else if (change) {
-	    if ((status = read(parrot_inotify_instance, 
-                               buffer, EVT_BUF_SIZE)) < 0) {
-		log_err("READ CALL");
-		return;
-	    }
+        if (change == -1) {
+            log_err("SELECT CALL");
+            return;
+        } else if (change) {
+            if ((status = read(parrot_inotify_instance, 
+                                   buffer, EVT_BUF_SIZE)) < 0) {
+            log_err("READ CALL");
+            return;
+            }
 
-	    parse_events(status, buffer, p_obj);
+            parse_events(status, buffer, p_obj);
 
-	}
+        }
     }
+
+    g_object_unref(p_obj);
 }
 
 void parrot_add_watch(char *path)
