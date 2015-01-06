@@ -3,7 +3,7 @@ Parrot
 
 ####description
 
-Parrot runs as a systemd user service and also a dbus service.  Parrot's dbus 
+Parrot runs as a systemd user service and also as a dbus service.  Parrot's dbus 
 service capabilities offer signals and methods that allow you to remotely set 
 up watches to back up files and/or signal on events.
 
