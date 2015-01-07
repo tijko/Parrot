@@ -12,16 +12,18 @@
 
 int notify_parrot_init(void) 
 {
-    ParrotObject *p_obj;
+    struct ParrotGDBusObj *parrot_gdbus_obj;
     pthread_t parrot_dbus;
 
     log_parrot();
 
-    p_obj = g_object_new(VALUE_TYPE_OBJECT, NULL);
+    parrot_gdbus_obj = malloc(sizeof *parrot_gdbus_obj);
+    parrot_gdbus_obj->p_obj = g_object_new(VALUE_TYPE_OBJECT, NULL);
 
     // thread to register the parrot object to dbus and contain the dbus
     // mainloop
-    pthread_create(&parrot_dbus, NULL, (void *) register_parrot_obj, p_obj);
+    pthread_create(&parrot_dbus, NULL, (void *) register_parrot_obj, 
+                                                   parrot_gdbus_obj);
 
     if ((parrot_inotify_instance = inotify_init()) == -1) {
         log_err("INOTIFY_INIT");
@@ -29,12 +31,12 @@ int notify_parrot_init(void)
     }
 
     watch_num = 0;
-    parrot_mainloop(p_obj);
+    parrot_mainloop(parrot_gdbus_obj);
 
     return 0;
 }
 
-void parrot_mainloop(ParrotObject *p_obj)
+void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
 {
     int change, status;
     char buffer[EVT_BUF_SIZE];
@@ -58,12 +60,12 @@ void parrot_mainloop(ParrotObject *p_obj)
             return;
             }
 
-            parse_events(status, buffer, p_obj);
+            parse_events(status, buffer, parrot_gdbus_obj->p_obj);
 
         }
     }
 
-    g_object_unref(p_obj);
+//    g_object_unref(p_obj);
 }
 
 void parrot_add_watch(char *path)
