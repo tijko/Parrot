@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <signal.h>
 
 #include "src/parrot.h"
@@ -15,6 +14,7 @@ int main(int argc, char *argv[]) {
     if (notify_flag == -1)
         notify_err();
 
+    RUNNING = true;
     notify_flag = notify_parrot_init();
 
     if (notify_flag == -1)
@@ -25,9 +25,8 @@ int main(int argc, char *argv[]) {
 
 void cleanup(int signo)
 {
+    RUNNING = false;
     sleep(1); // a small sleep to allow enough time for cleanup.
-
-    // call cleanup function
 
     signal(SIGINT, SIG_DFL);
     raise(signo);
