@@ -1,10 +1,12 @@
-#include <dbus/dbus-glib.h>
-#include <sys/select.h>
-#include <sys/socket.h>
+#include <glib.h>
+#include <time.h>
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
-#include <time.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <dbus/dbus.h>
+#include <dbus/dbus-glib-lowlevel.h>
 
 
 // Macro to set a directory to backup the files from the directory above being 
@@ -37,6 +39,10 @@ int watch_num;
 //      events you could increase this value
 #define EVT_BUF_SIZE (EVT_SIZE) 
 
+#define PARROT_DBUS_PATH "/org/Parrot"
+#define PARROT_DBUS_OBJECT "org.Parrot"
+#define PARROT_DBUS_INTERFACE "org.Parrot.Inotify"
+
 // Gobject types 
 typedef struct {
     GObject parent;
@@ -61,8 +67,21 @@ gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
 gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
                                  DBusGMethodInvocation *ctxt);
 
+struct ParrotGDBusObj {
+    GMainLoop *mainloop;
+    DBusGConnection *conn;
+    DBusConnection *dconn;
+    DBusGProxy *proxy;
+    ParrotObject *p_obj;
+};
+
 // Creates the daemon.
 int parrot_daemon(void);
+
+#define XDG_RUNTIME_DIR "XDG_RUNTIME_DIR"
+#define PARROT_PID_PATH "/parrot/parrot.pid"
+
+int create_pid_file(void);
 
 // This is the function that sets the inotify event loop.  The watch is added for 
 // the `file_dir_to_parrot` and will signal to backup on events.
@@ -72,7 +91,7 @@ void parrot_add_watch(char *path);
 
 void parrot_remove_watch(char *path);
 
-void parrot_mainloop(ParrotObject *p_obj);
+void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj);
 
 // Function to parse the inotify_event structs and pass on the relavent 
 // members.
@@ -123,4 +142,4 @@ void log_method(char *fn);
 void cleanup(int signo);
 
 // Register the D-Bus parrot object
-void register_parrot_obj(ParrotObject *p_obj);
+void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj);
