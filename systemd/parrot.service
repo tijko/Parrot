@@ -4,7 +4,10 @@ After=dbus.service
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/parrot
+RuntimeDirectory=parrot
+RuntimeDirectoryMode=0777
+ExecStart=/usr/bin/parrot --pidfile=%t/parrot/parrot.pid
+PIDFile=%t/parrot/parrot.pid
 
 [Install]
 WantedBy=default.target
