@@ -2,9 +2,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <stdlib.h>
 #include <pthread.h>
-#include <stdbool.h>
 #include <sys/inotify.h>
 
 #include "parrot.h"
@@ -36,6 +34,16 @@ int notify_parrot_init(void)
     return 0;
 }
 
+void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj)
+{
+    g_main_loop_unref(parrot_gdbus_obj->mainloop);
+    g_object_unref(parrot_gdbus_obj->proxy);
+    dbus_g_connection_unref(parrot_gdbus_obj->conn);
+    dbus_connection_unref(parrot_gdbus_obj->dconn);
+    g_object_unref(parrot_gdbus_obj->p_obj);
+    free(parrot_gdbus_obj);
+}
+
 void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
 {
     int change, status;
@@ -44,7 +52,7 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
     fd_set watchfds;
     FD_ZERO(&watchfds);
 
-    while (true) {
+    while (RUNNING) {
 
         FD_SET(parrot_inotify_instance, &watchfds);
         change = events_in(parrot_inotify_instance + 1, &watchfds);
@@ -65,7 +73,7 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
         }
     }
 
-//    g_object_unref(p_obj);
+    parrot_cleanup(parrot_gdbus_obj);
 }
 
 void parrot_add_watch(char *path)
