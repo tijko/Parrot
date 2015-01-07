@@ -1,13 +1,18 @@
 #include <glib.h>
 #include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <dbus/dbus.h>
 #include <sys/select.h>
 #include <sys/socket.h>
-#include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
+
+bool RUNNING;
 
 // Macro to set a directory to backup the files from the directory above being 
 // monitored.
@@ -86,6 +91,8 @@ int create_pid_file(void);
 // This is the function that sets the inotify event loop.  The watch is added for 
 // the `file_dir_to_parrot` and will signal to backup on events.
 int notify_parrot_init(void);
+
+void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj);
 
 void parrot_add_watch(char *path);
 
