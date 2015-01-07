@@ -13,7 +13,7 @@ int parrot_daemon(void)
      * threads separated from any controlling terminal.  This is the standard 
      * method for creating a daemon in a linux/gnu enviroment.  Fork twice,
      * setting the file mode, create a new session ID, and finally change to 
-     * the "/" or root directory are all still done.
+     * the "/" or root directory.
      */
    
     pid_t pid;
@@ -76,7 +76,6 @@ int create_pid_file(void)
     pid_file_fd = open(user_path, O_CREAT | O_RDWR, 0666);
     if (pid_file_fd == -1)
         return -1;
-
 
     snprintf(pid_str, max_pidstr_len, "%d", parrot_pid);
     write(pid_file_fd, (void *) pid_str, strlen(pid_str));
