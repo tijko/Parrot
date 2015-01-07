@@ -4,7 +4,6 @@
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-bindings.h>
-#include <dbus/dbus-glib-lowlevel.h>
 
 #include "../parrot.h"
 
@@ -101,28 +100,19 @@ gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
     return TRUE;    
 }
 
-void register_parrot_obj(ParrotObject *p_obj)
+void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj)
 {
-    GMainLoop *mainloop;
-    DBusGConnection *conn;
-    DBusConnection *dconn;
-    DBusGProxy *proxy;
-    GError *err;
-
     guint result;
-    char *path, *name, *iface, *addr;
+    char *addr;
+    GError *err;
     
-    mainloop = g_main_loop_new(NULL, FALSE);
+    parrot_gdbus_obj->mainloop = g_main_loop_new(NULL, FALSE);
     dbus_g_object_type_install_info(VALUE_TYPE_OBJECT, 
                                     &dbus_glib_parrot_obj_object_info);
 
-    path = "/org/Parrot";
-    name = "org.Parrot";
-    iface = "org.Parrot.Inotify";
-
     err = NULL;
-    conn = dbus_g_bus_get(DBUS_BUS_SESSION, &err);
-
+    parrot_gdbus_obj->conn = dbus_g_bus_get(DBUS_BUS_SESSION, &err);
+    
     if (err != NULL) {
         dbus_conn_err(err->code);
     } else {
@@ -134,16 +124,24 @@ void register_parrot_obj(ParrotObject *p_obj)
             dbus_addr_err();
     }
 
-    dconn = dbus_g_connection_get_connection(conn);
+    parrot_gdbus_obj->dconn = dbus_g_connection_get_connection(
+                                             parrot_gdbus_obj->conn);
 
-    dbus_bus_request_name(dconn, name, DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
+    dbus_bus_request_name(parrot_gdbus_obj->dconn, 
+                          PARROT_DBUS_OBJECT, 
+                          DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
 
-    proxy = dbus_g_proxy_new_for_name(conn, name, path, iface);
-    dbus_g_proxy_call(proxy, "RequestName", &err, G_TYPE_STRING, name, 
-                      G_TYPE_UINT, 0, G_TYPE_INVALID, G_TYPE_UINT, &result,
-                      G_TYPE_INVALID);
+    parrot_gdbus_obj->proxy = dbus_g_proxy_new_for_name(parrot_gdbus_obj->conn,
+                                                        PARROT_DBUS_OBJECT,
+                                                        PARROT_DBUS_PATH, 
+                                                        PARROT_DBUS_INTERFACE);
 
-    dbus_g_connection_register_g_object(conn, path, G_OBJECT(p_obj));
+    dbus_g_proxy_call(parrot_gdbus_obj->proxy, "RequestName", &err, G_TYPE_STRING,
+                      PARROT_DBUS_OBJECT, G_TYPE_UINT, 0, G_TYPE_INVALID, 
+                      G_TYPE_UINT, &result, G_TYPE_INVALID);
 
-    g_main_loop_run(mainloop);
+    dbus_g_connection_register_g_object(parrot_gdbus_obj->conn, PARROT_DBUS_PATH,
+                                                G_OBJECT(parrot_gdbus_obj->p_obj));
+
+    g_main_loop_run(parrot_gdbus_obj->mainloop);
 }
