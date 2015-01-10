@@ -1,7 +1,17 @@
+systemd timesout d-feet
+
+closing connections -- pass a struct of ParrotObject (GObject) and the mainloop instance
+                       so cleanup can be made on signal
+
+forking -- when done with one fork (only one process is being created but, several threads used)
+           with two forks no process.  Systemd ends the process and with one forking happends?
+
+Hash table of connections and other data
+
+
 setup more error handling/logging & commenting
-log on interrupt signal
+log on interrupt signal -> how many clients are assigned to receive a signal?
 log on methods called
-how many clients connected?
 
 more detailed signal data passed (i.e. file name, type of access)
     [on this signal data] :: have a protocol? 

@@ -24,7 +24,7 @@ int notify_parrot_init(void)
                                                    parrot_gdbus_obj);
 
     if ((parrot_inotify_instance = inotify_init()) == -1) {
-        log_err("INOTIFY_INIT");
+//        log_err("INOTIFY_INIT");
         return -1;
     }
 
@@ -59,12 +59,12 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
         FD_ZERO(&watchfds);
 
         if (change == -1) {
-            log_err("SELECT CALL");
+//            log_err("SELECT CALL");
             return;
         } else if (change) {
             if ((status = read(parrot_inotify_instance, 
                                    buffer, EVT_BUF_SIZE)) < 0) {
-            log_err("READ CALL");
+//            log_err("READ CALL");
             return;
             }
 
@@ -85,7 +85,7 @@ void parrot_add_watch(char *path)
 
     if ((watch = inotify_add_watch(parrot_inotify_instance, 
                                    path, IN_ACCESS)) == -1) {
-        log_err("INOTIFY_ADD_WATCH");
+//        log_err("INOTIFY_ADD_WATCH");
         return;
     }
 
@@ -164,8 +164,8 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
         pthread_join(backup_file, &backup);
         parrot_obj_accessed(p_obj, (int) access_time);            
 
-        if (backup) 
-            log_err("BACKUP");
+//        if (backup) 
+//            log_err("BACKUP");
 
         events += EVT_SIZE + event->len;
     }

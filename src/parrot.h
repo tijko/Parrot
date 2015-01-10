@@ -117,19 +117,8 @@ int backup_files(char *file_path, char *backup_path);
 int events_in(int highest_fd, fd_set *watchfds);
 
 // Logs any errors and their names to parrot log.
-void log_err(const char *path); 
-
-// Logs any errors dealing with setting up the interrupt signal.
-void sig_err(void);
-
-// Logs any errors associated with setting up the dbus connection.
-void dbus_conn_err(int err);
-
-// Logs any errors while returning the session bus address.
-void dbus_addr_err(void);
-
-// Logs any errors that occur during inotify_loop.
-void notify_err(void);
+void log_error(const char *file_name, const char *func, 
+               const char *call, int line); 
 
 // Logs any event and the mask of that event to the parrot log.
 void log_evt(char *file, int mask);

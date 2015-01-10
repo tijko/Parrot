@@ -110,14 +110,15 @@ void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj)
     parrot_gdbus_obj->conn = dbus_g_bus_get(DBUS_BUS_SESSION, &err);
     
     if (err != NULL) {
-        dbus_conn_err(err->code);
+        log_error("parrot_object.c", "register_parrot_obj", 
+                  "dbus_g_bus_get", 110);
     } else {
         addr = getenv("DBUS_SESSION_BUS_ADDRESS");
 
         if (addr)
             log_dbus(addr);
         else
-            dbus_addr_err();
+            log_error("parrot_object.c", "register_parrot_obj", "getenv", 116);
     }
 
     parrot_gdbus_obj->dconn = dbus_g_connection_get_connection(
