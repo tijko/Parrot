@@ -7,7 +7,7 @@
 #include "parrot.h"
 
 
-void find_files(struct watch_trigger *accessed)
+void find_file(struct watch_trigger *accessed)
 {
     char *pathname, *backupname;
     DIR *drect;
@@ -25,10 +25,10 @@ void find_files(struct watch_trigger *accessed)
                                                    strlen(accessed->dir) + 1);
             backupname = create_pathname(BACKUP_PATH, dir_files->d_name, BACKUP_SIZE);            
             backup_err = backup_files(pathname, backupname);
-//            if (backup_err) 
-//                log_err(pathname);
-//            else
-//                log_backup(dir_files->d_name);
+            if (backup_err) 
+                log_error("parrot_files.c", "find_files", "backup_files", 27);
+            else
+                log_backup(dir_files->d_name);
 
             free(pathname);
             free(backupname);
@@ -54,19 +54,19 @@ int backup_files(char *file_path, char *backup_path)
     int r_file, f_read, w_file;
 
     if ((r_file = open(file_path, O_RDONLY)) == -1) {
-//        log_err("OPEN_R BACKUP");
+        log_error("parrot_files.c", "create_pathname", "open", 56);
         return errno;
     }
 
     void *fd_buffer = malloc(sizeof(char) * file_size);
 
     if ((f_read = read(r_file, fd_buffer, file_size)) == -1) {
-//        log_err("READ BACKUP");
+        log_error("parrot_files.c", "backup_files", "read", 63);
         return errno;
     }
 
     if ((w_file = open(backup_path, O_CREAT | O_RDWR, 0644)) == -1) {
-//        log_err("OPEN_W BACKUP");
+        log_error("parrot_files.c", "backup_files", "open", 68);
         return errno;
     }
 
