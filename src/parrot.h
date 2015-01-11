@@ -106,7 +106,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj);
 
 // Walks the directory being monitored and calls the backup function when a 
 // file is found.
-void find_files(struct watch_trigger *accessed);
+void find_file(struct watch_trigger *accessed);
 
 char *create_pathname(char *dirname, char *filename, size_t pathsize);
 
