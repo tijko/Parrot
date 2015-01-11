@@ -161,12 +161,12 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
             }
         }
 
-        pthread_create(&backup_file, NULL, (void *) find_files, accessed);
+        pthread_create(&backup_file, NULL, (void *) find_file, accessed);
         pthread_join(backup_file, &backup);
         parrot_obj_accessed(p_obj, (int) access_time);            
 
-//        if (backup) 
-//            log_err("BACKUP");
+        if (backup) 
+            log_error("notify_parrot.c", "parse_events", "find_file", 164);
 
         events += EVT_SIZE + event->len;
     }
