@@ -116,7 +116,7 @@ void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj)
         addr = getenv("DBUS_SESSION_BUS_ADDRESS");
 
         if (addr)
-            log_dbus(addr);
+            log_event("ACQUIRED BUS -> ", 1, addr);
         else
             log_error("parrot_object.c", "register_parrot_obj", "getenv", 116);
     }
