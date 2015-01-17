@@ -28,7 +28,7 @@ void find_file(struct watch_trigger *accessed)
             if (backup_err) 
                 log_error("parrot_files.c", "find_files", "backup_files", 27);
             else
-                log_backup(dir_files->d_name);
+                log_event("BACKUP -> ", 1, dir_files->d_name);
 
             free(pathname);
             free(backupname);
