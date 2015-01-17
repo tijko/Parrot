@@ -13,7 +13,7 @@ int notify_parrot_init(void)
     struct ParrotGDBusObj *parrot_gdbus_obj;
     pthread_t parrot_dbus;
 
-    log_parrot();
+    log_event("INIT", 0);
 
     parrot_gdbus_obj = malloc(sizeof *parrot_gdbus_obj);
     parrot_gdbus_obj->p_obj = g_object_new(VALUE_TYPE_OBJECT, NULL);
@@ -42,6 +42,7 @@ void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj)
     dbus_connection_unref(parrot_gdbus_obj->dconn);
     g_object_unref(parrot_gdbus_obj->p_obj);
     free(parrot_gdbus_obj);
+    log_event("CLEANUP", 0);
 }
 
 void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
@@ -95,7 +96,7 @@ void parrot_add_watch(char *path)
     new_watch->parrot_wd = watch;
 
     current_watch[watch_num++] = new_watch;
-    // XXX -> add log function
+    log_event("WATCH ADDED -> ", 1, path);
 }
 
 void parrot_remove_watch(char *path)
@@ -107,7 +108,7 @@ void parrot_remove_watch(char *path)
             free(current_watch[watch]->dir);
             free(current_watch[watch]);
             current_watch[watch] = NULL;
-
+            log_event("WATCH REMOVED -> ", 1, path);
             for (idx=watch; watch < watch_num; watch++) {
                 if (current_watch[watch])
                     current_watch[idx++] = current_watch[watch];
@@ -151,7 +152,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
         if (event->mask != IN_ACCESS)
             return;
 
-        log_evt(event->name, event->mask);
+        log_event("EVENT -> ", 1, event->name);
 
         for (cur_watch=0; cur_watch < watch_num; cur_watch++) {
             if (current_watch[cur_watch]->parrot_wd == event->wd) {
