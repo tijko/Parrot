@@ -121,18 +121,7 @@ void log_error(const char *file_name, const char *func,
                const char *call, int line); 
 
 // Logs any event and the mask of that event to the parrot log.
-void log_evt(char *file, int mask);
-
-// Logs parrot being started.
-void log_parrot(void);
-
-// Logs successful backup of file.
-void log_backup(char *fn);
-
-// Logs the a successful dbus session connection
-void log_dbus(char *addr);
-
-void log_method(char *fn);
+void log_event(char *event_msg, int descriptors, ...);
 
 // Signal handler to complete cleanup if any interrupts are received.
 void cleanup(int signo);
