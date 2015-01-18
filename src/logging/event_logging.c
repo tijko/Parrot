@@ -1,7 +1,7 @@
 #include <systemd/sd-journal.h>
-#include <stdlib.h>
 #include <stdarg.h>
-#include <string.h>
+
+#include "../parrot.h"
 
 
 void log_event(char *event_msg, int descriptors, ...)
@@ -13,6 +13,12 @@ void log_event(char *event_msg, int descriptors, ...)
         char *event, *msg;
 
         msg = malloc(sizeof(char) * strlen(event_msg));
+
+        if (msg == NULL) {
+            log_error("event_logging.c", "log_event", "malloc", 15);
+            return;
+        }
+    
         strcat(msg, event_msg);
         va_start(log_args, descriptors);
 
