@@ -31,7 +31,7 @@ void cleanup(int signo)
 {
     RUNNING = false;
     sleep(1); // a small sleep to allow enough time for cleanup.
-    log_event("SIGINT", 0);
+    log_event("signal interrupt", 0);
     signal(SIGINT, SIG_DFL);
     raise(signo);
 }
