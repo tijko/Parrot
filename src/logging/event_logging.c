@@ -12,19 +12,19 @@ void log_event(char *event_msg, int descriptors, ...)
         va_list log_args;
         char *event, *msg;
 
-        msg = malloc(sizeof(char) * strlen(event_msg));
+        msg = malloc(sizeof(char) * strlen(event_msg) + 1);
 
         if (msg == NULL) {
             log_error("event_logging.c", "log_event", "malloc", 15);
             return;
         }
     
-        strcat(msg, event_msg);
+        snprintf(msg, strlen(event_msg) + 1, "%s", event_msg);
         va_start(log_args, descriptors);
 
         for (i=0; i < descriptors; i++) {
             event = va_arg(log_args, char *);                
-            msg = (char *) realloc(msg, strlen(msg) + strlen(event));
+            msg = (char *) realloc(msg, strlen(msg) + strlen(event) + 1);
             strcat(msg, event);
         }
 
