@@ -1,7 +1,8 @@
-systemd timesout d-feet
+-- handle non-fatal errors in a separate error-logging function?
 
-closing connections -- pass a struct of ParrotObject (GObject) and the mainloop instance
-                       so cleanup can be made on signal
+-- comments
+
+systemd timesout d-feet
 
 forking -- when done with one fork (only one process is being created but, several threads used)
            with two forks no process.  Systemd ends the process and with one forking happends?
@@ -9,17 +10,6 @@ forking -- when done with one fork (only one process is being created but, sever
 Hash table of connections and other data
 
 
-setup more error handling/logging & commenting
-log on interrupt signal -> how many clients are assigned to receive a signal?
-log on methods called
+how many clients are assigned to receive a signal?
 
 more detailed signal data passed (i.e. file name, type of access)
-    [on this signal data] :: have a protocol? 
-                    ==-- DBUS HANDLES THIS PROTOCOL --== (nice thought though if this were under some independent ipc method)        
-        - where there is a timestamp and other meta data about the change and specific file.
-
-different kind of events --> signals
-    different signals to different events
-    logging of each specific event
-
-properties???
