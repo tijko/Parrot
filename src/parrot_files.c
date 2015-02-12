@@ -41,7 +41,11 @@ char *create_pathname(char *dirname, char *filename, size_t pathsize)
     char *pathname;
     size_t pathname_size;
     pathname_size = strlen(filename) + pathsize;
-    pathname = malloc(sizeof(char) * pathname_size);
+    if ((pathname = malloc(sizeof(char) * pathname_size)) == NULL) {
+        log_error("parrot_files.c", "create_pathname", "malloc", 45)
+        return NULL;
+    }
+
     snprintf(pathname, pathname_size, "%s%s", dirname, filename);
     return pathname;    
 }
@@ -54,19 +58,23 @@ int backup_files(char *file_path, char *backup_path)
     int r_file, f_read, w_file;
 
     if ((r_file = open(file_path, O_RDONLY)) == -1) {
-        log_error("parrot_files.c", "create_pathname", "open", 56);
+        log_error("parrot_files.c", "backup_files", "open", 60);
         return errno;
     }
 
     void *fd_buffer = malloc(sizeof(char) * file_size);
+    if (fd_buffer == NULL) {
+        log_error("parrot_files.c", "backup_files", "malloc", 65);
+        return errno;
+    }
 
     if ((f_read = read(r_file, fd_buffer, file_size)) == -1) {
-        log_error("parrot_files.c", "backup_files", "read", 63);
+        log_error("parrot_files.c", "backup_files", "read", 71);
         return errno;
     }
 
     if ((w_file = open(backup_path, O_CREAT | O_RDWR, 0644)) == -1) {
-        log_error("parrot_files.c", "backup_files", "open", 68);
+        log_error("parrot_files.c", "backup_files", "open", 76);
         return errno;
     }
 
