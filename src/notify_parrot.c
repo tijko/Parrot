@@ -16,6 +16,11 @@ int notify_parrot_init(void)
     log_event("initializing parrot loop", 0);
 
     parrot_gdbus_obj = malloc(sizeof *parrot_gdbus_obj);
+    if (parrot_gdbus_obj == NULL) {
+        log_error("notify_parrot.c", "notify_parrot_init", "malloc", 18);
+        return -1;
+    }
+
     parrot_gdbus_obj->p_obj = g_object_new(VALUE_TYPE_OBJECT, NULL);
 
     // thread to register the parrot object to dbus and contain the dbus
@@ -24,7 +29,7 @@ int notify_parrot_init(void)
                                                    parrot_gdbus_obj);
 
     if ((parrot_inotify_instance = inotify_init()) == -1) {
-        log_error("notify_parrot.c", "notify_parrot_init", "inotify_init", 26);
+        log_error("notify_parrot.c", "notify_parrot_init", "inotify_init", 31);
         return -1;
     }
 
@@ -60,12 +65,12 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
         FD_ZERO(&watchfds);
 
         if (change == -1) {
-            log_error("notify_parrot.c", "parrot_mainloop", "events_in", 58);
+            log_error("notify_parrot.c", "parrot_mainloop", "events_in", 64);
             return;
         } else if (change) {
             if ((status = read(parrot_inotify_instance, 
                                    buffer, EVT_BUF_SIZE)) < 0) {
-                log_error("notify_parrot.c", "parrot_mainloop", "read", 65);
+                log_error("notify_parrot.c", "parrot_mainloop", "read", 71);
                 return;
             }
 
@@ -83,11 +88,14 @@ void parrot_add_watch(char *path)
     struct parrot_watch *new_watch;
 
     new_watch = malloc(sizeof *new_watch);
+    if (new_watch == NULL) {
+        log_error("notify_parrot.c", "parrot_add_watch",
+                  "inotify_add_watch", 90);
 
     if ((watch = inotify_add_watch(parrot_inotify_instance, 
                                    path, IN_ACCESS)) == -1) {
         log_error("notify_parrot.c", "parrot_add_watch", 
-                  "inotify_add_watch", 86);
+                  "inotify_add_watch", 95);
         return;
     }
 
@@ -167,7 +175,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
         parrot_obj_accessed(p_obj, (int) access_time);            
 
         if (backup) 
-            log_error("notify_parrot.c", "parse_events", "find_file", 164);
+            log_error("notify_parrot.c", "parse_events", "find_file", 173);
 
         events += EVT_SIZE + event->len;
     }
