@@ -153,6 +153,10 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 
     events = 0;
     accessed = malloc(sizeof *accessed);
+    if (accessed == NULL) {
+        log_error("notify_parrot.c", "parse_events", "malloc", 155);
+        return;
+    }
 
     while (events < e_status) { 
         event = (struct inotify_event *) &e_buf[events];
@@ -175,7 +179,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
         parrot_obj_accessed(p_obj, (int) access_time);            
 
         if (backup) 
-            log_error("notify_parrot.c", "parse_events", "find_file", 173);
+            log_error("notify_parrot.c", "parse_events", "find_file", 178);
 
         events += EVT_SIZE + event->len;
     }
