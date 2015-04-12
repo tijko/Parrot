@@ -100,5 +100,6 @@ int create_pid_file(void)
     close(pid_file_fd);
 
     free(user_path);
+
     return 0;
 }
