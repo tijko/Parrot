@@ -42,7 +42,7 @@ char *create_pathname(char *dirname, char *filename, size_t pathsize)
     size_t pathname_size;
     pathname_size = strlen(filename) + pathsize;
     if ((pathname = malloc(sizeof(char) * pathname_size)) == NULL) {
-        log_error("parrot_files.c", "create_pathname", "malloc", 45)
+        log_error("parrot_files.c", "create_pathname", "malloc", 45);
         return NULL;
     }
 
