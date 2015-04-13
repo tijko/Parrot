@@ -10,9 +10,10 @@ void log_event(char *event_msg, int descriptors, ...)
 
         int i;
         va_list log_args;
-        char *event, *msg;
+        char *event, *msg, *tmp;
 
         msg = malloc(sizeof(char) * strlen(event_msg) + 1);
+        tmp = NULL;
 
         if (msg == NULL) {
             log_error("event_logging.c", "log_event", "malloc", 15);
@@ -24,7 +25,16 @@ void log_event(char *event_msg, int descriptors, ...)
 
         for (i=0; i < descriptors; i++) {
             event = va_arg(log_args, char *);                
-            msg = (char *) realloc(msg, strlen(msg) + strlen(event) + 1);
+            tmp = realloc(msg, strlen(msg) + strlen(event) + 1);
+
+            if (tmp == NULL) {
+                log_error("event_logging.c", "log_event", "realloc", 27);
+                free(msg);
+                return;
+            }
+        
+            msg = tmp;            
+            tmp = NULL;
             strcat(msg, event);
         }
 
@@ -33,9 +43,6 @@ void log_event(char *event_msg, int descriptors, ...)
         sd_journal_print(LOG_INFO, "PARROT: %s\n", msg);
         free(msg);
 
-    } else {
-
+    } else 
         sd_journal_print(LOG_INFO, "PARROT: %s\n", event_msg);
-
-    }
 }
