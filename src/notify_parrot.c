@@ -88,9 +88,10 @@ void parrot_add_watch(char *path)
     struct parrot_watch *new_watch;
 
     new_watch = malloc(sizeof *new_watch);
-    if (new_watch == NULL) {
+    if (new_watch == NULL) 
         log_error("notify_parrot.c", "parrot_add_watch",
                   "inotify_add_watch", 90);
+    
 
     if ((watch = inotify_add_watch(parrot_inotify_instance, 
                                    path, IN_ACCESS)) == -1) {
