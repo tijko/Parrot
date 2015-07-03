@@ -57,7 +57,7 @@ int backup_files(char *file_path, char *backup_path)
     int file_size = (int) f_buffer.st_size;
     int r_file, f_read, w_file;
 
-    if ((r_file = open(file_path, O_RDONLY)) == -1) {
+    if ((r_file = open(file_path, O_RDONLY | O_NOATIME)) == -1) {
         log_error("parrot_files.c", "backup_files", "open", 60);
         return errno;
     }
