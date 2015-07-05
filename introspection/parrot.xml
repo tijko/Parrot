@@ -23,6 +23,7 @@
     <method name="add_watch">
         <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
         <arg type="s" name="watch" direction="in" />
+        <arg type="i" name="mask" direction="in" />
     </method>
 
     <!-- remove_watch(): removes a watch for the provided directory or
