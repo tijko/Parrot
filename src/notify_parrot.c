@@ -86,25 +86,21 @@ int parrot_add_watch(char *path)
 {
     int watch;
     struct parrot_watch *new_watch;
-    DIR *chk_path_isdir;
 
-    if ((chk_path_isdir = opendir(path)) == NULL) {
-        log_error("notify_parrot.c", "parrot_add_watch", "opendir", 90);
-        return -1;
-    } else
-        closedir(chk_path_isdir);
+    // add watch check ....
 
     new_watch = malloc(sizeof *new_watch);
-    if (new_watch == NULL) 
+    if (new_watch == NULL) {
         log_error("notify_parrot.c", "parrot_add_watch",
-                  "inotify_add_watch", 90);
-    
+                  "malloc", 92);
+        return -1;
+    }
 
     if ((watch = inotify_add_watch(parrot_inotify_instance, 
                                    path, IN_ACCESS)) == -1) {
         free(new_watch);
         log_error("notify_parrot.c", "parrot_add_watch", 
-                  "inotify_add_watch", 95);
+                  "inotify_add_watch", 99);
         return -1;
     }
 
@@ -164,7 +160,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
     events = 0;
     accessed = malloc(sizeof *accessed);
     if (accessed == NULL) {
-        log_error("notify_parrot.c", "parse_events", "malloc", 155);
+        log_error("notify_parrot.c", "parse_events", "malloc", 161);
         return;
     }
 
@@ -189,7 +185,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
         parrot_obj_accessed(p_obj, (int) access_time);            
 
         if (backup) 
-            log_error("notify_parrot.c", "parse_events", "find_file", 178);
+            log_error("notify_parrot.c", "parse_events", "find_file", 183);
 
         events += EVT_SIZE + event->len;
     }
