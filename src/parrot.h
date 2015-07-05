@@ -94,7 +94,7 @@ int notify_parrot_init(void);
 
 void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj);
 
-void parrot_add_watch(char *path);
+int parrot_add_watch(char *path);
 
 void parrot_remove_watch(char *path);
 
