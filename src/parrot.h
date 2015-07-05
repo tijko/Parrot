@@ -16,10 +16,16 @@ bool RUNNING;
 
 // Macro to set a directory to backup the files from the directory above being 
 // monitored.
-// Edit to specify which directory to backup to.
-#define BACKUP_PATH "/home/tijko/documents/backups/backup_c/"
+// XXX Edit to specify which directory to backup to.
+#define BACKUP_PATH ""
 
 #define BACKUP_SIZE strlen(BACKUP_PATH) + 1
+
+// Parrot mask for either type of watch to set, directory or file watch.
+enum {
+    W_DIR,
+    W_FIL
+};
 
 struct parrot_watch {
     int parrot_wd;
@@ -66,7 +72,7 @@ gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 gboolean parrot_obj_current_watches(ParrotObject *p_obj,
                                     DBusGMethodInvocation *ctxt);
 
-gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch,
+gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, int mask,
 			                  DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
@@ -94,7 +100,7 @@ int notify_parrot_init(void);
 
 void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj);
 
-int parrot_add_watch(char *path);
+int parrot_add_watch(char *path, int mask);
 
 void parrot_remove_watch(char *path);
 
