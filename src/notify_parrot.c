@@ -82,10 +82,17 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
     parrot_cleanup(parrot_gdbus_obj);
 }
 
-void parrot_add_watch(char *path)
+int parrot_add_watch(char *path)
 {
     int watch;
     struct parrot_watch *new_watch;
+    DIR *chk_path_isdir;
+
+    if ((chk_path_isdir = opendir(path)) == NULL) {
+        log_error("notify_parrot.c", "parrot_add_watch", "opendir", 90);
+        return -1;
+    } else
+        closedir(chk_path_isdir);
 
     new_watch = malloc(sizeof *new_watch);
     if (new_watch == NULL) 
@@ -95,9 +102,10 @@ void parrot_add_watch(char *path)
 
     if ((watch = inotify_add_watch(parrot_inotify_instance, 
                                    path, IN_ACCESS)) == -1) {
+        free(new_watch);
         log_error("notify_parrot.c", "parrot_add_watch", 
                   "inotify_add_watch", 95);
-        return;
+        return -1;
     }
 
     new_watch->dir = malloc(sizeof(char) * strlen(path));
@@ -106,6 +114,7 @@ void parrot_add_watch(char *path)
 
     current_watch[watch_num++] = new_watch;
     log_event("watch added => ", 1, path);
+    return 0;
 }
 
 void parrot_remove_watch(char *path)
