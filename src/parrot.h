@@ -1,6 +1,7 @@
 #include <glib.h>
 #include <time.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -47,12 +48,10 @@ enum {
 
 struct parrot_watch {
     int parrot_wd;
-    char *dir;
-};
-
-struct watch_trigger {
-    char *file;
-    char *dir;
+    int watch_type;
+    void (*backup)(struct parrot_watch *accessed);
+    char *path;
+    char *evfile;
 };
 
 struct parrot_watch *current_watch[MAX_WATCHES];
@@ -128,9 +127,12 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj);
 // members.
 void parse_events(int e_status, char e_buf[], ParrotObject *p_obj);
 
+// Backs up a single file type watch.
+void find_file(struct parrot_watch *accessed);
+
 // Walks the directory being monitored and calls the backup function when a 
 // file is found.
-void find_file(struct watch_trigger *accessed);
+void find_files(struct parrot_watch *accessed);
 
 char *create_pathname(char *dirname, char *filename, size_t pathsize);
 
