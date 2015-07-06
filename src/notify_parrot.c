@@ -119,10 +119,11 @@ int parrot_add_watch(char *path, int mask)
         return -1;
     }
 
-    new_watch->dir = malloc(sizeof(char) * strlen(path));
-    strcpy(new_watch->dir, path);
+    new_watch->path = malloc(sizeof(char) * (strlen(path) + 1));
+    strcpy(new_watch->path, path);
     new_watch->parrot_wd = watch;
-
+    new_watch->watch_type = mask;
+    new_watch->backup = mask & W_FIL ? find_file : find_files;
     current_watch[watch_num++] = new_watch;
     log_event("watch added => ", 1, path);
     return 0;
@@ -133,8 +134,8 @@ void parrot_remove_watch(char *path)
     int watch, idx;
 
     for (watch=0; watch < watch_num; watch++) {
-        if (!strcmp(path, current_watch[watch]->dir)) {
-            free(current_watch[watch]->dir);
+        if (!strcmp(path, current_watch[watch]->path)) {
+            free(current_watch[watch]->path);
             free(current_watch[watch]);
             current_watch[watch] = NULL;
             log_event("watch removed => ", 1, path);
@@ -161,7 +162,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 {
     int events, cur_watch;
     struct inotify_event *event;
-    struct watch_trigger *accessed;
+    struct parrot_watch *accessed;
 
     void *backup;
     time_t access_time;
@@ -171,33 +172,36 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
     events = 0;
     accessed = malloc(sizeof *accessed);
     if (accessed == NULL) {
-        log_error("notify_parrot.c", "parse_events", "malloc", 172);
-        return;
+        log_error("notify_parrot.c", "parse_events", "malloc", 173);
+        goto stop_events;
     }
 
     while (events < e_status) { 
         event = (struct inotify_event *) &e_buf[events];
         access_time = time(NULL);
-        if (event->mask != IN_ACCESS)
-            return;
+        if (event->mask != IN_ACCESS) 
+            goto stop_events;            
 
         log_event("event => ", 1, event->name);
 
         for (cur_watch=0; cur_watch < watch_num; cur_watch++) {
             if (current_watch[cur_watch]->parrot_wd == event->wd) {
-                accessed->dir = current_watch[cur_watch]->dir;
-                accessed->file = event->name;
+                memcpy(accessed, current_watch[cur_watch], sizeof(*accessed));
+                accessed->evfile = event->name;
                 break;
             }
         }
 
-        pthread_create(&backup_file, NULL, (void *) find_file, accessed);
+        pthread_create(&backup_file, NULL, (void *) accessed->backup, accessed);
         pthread_join(backup_file, &backup);
         parrot_obj_accessed(p_obj, (int) access_time);            
 
         if (backup) 
-            log_error("notify_parrot.c", "parse_events", "find_file", 194);
+            log_error("notify_parrot.c", "parse_events", "find_file", 195);
 
         events += EVT_SIZE + event->len;
     }
+
+    stop_events:
+        free(accessed);
 }
