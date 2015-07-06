@@ -21,6 +21,24 @@ bool RUNNING;
 
 #define BACKUP_SIZE strlen(BACKUP_PATH) + 1
 
+/*
+    Setting the MAX_WATCHES will depend on how many watches are currently set
+    on the system and how many are allowed.
+
+    You can find the max number of watches:
+
+        '/proc/sys/fs/inotify/max_user_watches'
+
+    or by calling:
+
+        `sysctl fs.inotify.max_user_watches`
+
+    from your shell.
+*/
+
+// XXX Default max watches
+#define MAX_WATCHES 4096
+
 // Parrot mask for either type of watch to set, directory or file watch.
 enum {
     W_DIR,
@@ -37,7 +55,7 @@ struct watch_trigger {
     char *dir;
 };
 
-struct parrot_watch *current_watch[4092];
+struct parrot_watch *current_watch[MAX_WATCHES];
 
 int parrot_inotify_instance;
 int watch_num;
