@@ -6,15 +6,24 @@
 int main(int argc, char *argv[]) {
 
     int notify_flag;
+    int backup_directory;
+
+    backup_directory = open(BACKUP_PATH, O_RDONLY | O_DIRECTORY);
+    if (backup_directory == -1) {
+        log_error("main.c", "main", "open", 11);
+        return 0;
+    } else
+        close(backup_directory);
+    
     if ((signal(SIGINT, cleanup)) == SIG_ERR) {
-        log_error("main.c", "main", "signal", 9);
+        log_error("main.c", "main", "signal", 18);
         return 0;
     }
     
     notify_flag = parrot_daemon();
 
     if (notify_flag == -1) {
-        log_error("main.c", "main", "parrot_daemon", 12);
+        log_error("main.c", "main", "parrot_daemon", 23);
         return 0;
     }
 
@@ -22,7 +31,7 @@ int main(int argc, char *argv[]) {
     notify_flag = notify_parrot_init();
 
     if (notify_flag == -1)
-        log_error("main.c", "main", "notify_parrot_init", 18);
+        log_error("main.c", "main", "notify_parrot_init", 31);
 
     return 0;
 }
