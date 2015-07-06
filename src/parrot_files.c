@@ -9,7 +9,21 @@
 #include "parrot.h"
 
 
-void find_file(struct watch_trigger *accessed)
+void find_file(struct parrot_watch *accessed)
+{
+    char *backupname;
+    int backup_err;
+
+    backupname = create_pathname(BACKUP_PATH, accessed->evfile, BACKUP_SIZE);
+    backup_err = backup_files(accessed->path, backupname);
+    if (backup_err)
+        log_error("parrot_files.c", "find_file", "backup_files", 18);
+    else
+        log_event("backing up => ", 1, accessed->evfile);
+    free(backupname);
+}
+
+void find_files(struct parrot_watch *accessed)
 {
     char *pathname, *backupname;
     DIR *drect;
@@ -17,18 +31,18 @@ void find_file(struct watch_trigger *accessed)
     
     struct dirent *dir_files;
 
-    if ((drect = opendir(accessed->dir)) == NULL) 
-        log_error("parrot_files.c", "find_files", "opendir", 18); 
+    if ((drect = opendir(accessed->path)) == NULL) 
+        log_error("parrot_files.c", "find_file", "opendir", 35);
 
     while ((dir_files = readdir(drect))) {
 
-        if (dir_files->d_type == DT_REG && !strcmp(dir_files->d_name, accessed->file)) {
-            pathname = create_pathname(accessed->dir, dir_files->d_name, 
-                                                   strlen(accessed->dir) + 1);
+        if (dir_files->d_type == DT_REG && !strcmp(dir_files->d_name, accessed->evfile)) {
+            pathname = create_pathname(accessed->path, dir_files->d_name, 
+                                                   strlen(accessed->path) + 1);
             backupname = create_pathname(BACKUP_PATH, dir_files->d_name, BACKUP_SIZE);            
             backup_err = backup_files(pathname, backupname);
             if (backup_err) 
-                log_error("parrot_files.c", "find_files", "backup_files", 27);
+                log_error("parrot_files.c", "find_files", "backup_files", 44);
             else
                 log_event("backing up => ", 1, dir_files->d_name);
 
@@ -44,7 +58,7 @@ char *create_pathname(char *dirname, char *filename, size_t pathsize)
     size_t pathname_size;
     pathname_size = strlen(filename) + pathsize;
     if ((pathname = malloc(sizeof(char) * pathname_size)) == NULL) {
-        log_error("parrot_files.c", "create_pathname", "malloc", 45);
+        log_error("parrot_files.c", "create_pathname", "malloc", 63);
         return NULL;
     }
 
@@ -60,23 +74,23 @@ int backup_files(char *file_path, char *backup_path)
     int r_file, f_read, w_file;
 
     if ((r_file = open(file_path, O_RDONLY | O_NOATIME)) == -1) {
-        log_error("parrot_files.c", "backup_files", "open", 60);
+        log_error("parrot_files.c", "backup_files", "open", 79);
         return errno;
     }
 
     void *fd_buffer = malloc(sizeof(char) * file_size);
     if (fd_buffer == NULL) {
-        log_error("parrot_files.c", "backup_files", "malloc", 65);
+        log_error("parrot_files.c", "backup_files", "malloc", 84);
         return errno;
     }
 
     if ((f_read = read(r_file, fd_buffer, file_size)) == -1) {
-        log_error("parrot_files.c", "backup_files", "read", 71);
+        log_error("parrot_files.c", "backup_files", "read", 90);
         return errno;
     }
 
     if ((w_file = open(backup_path, O_CREAT | O_RDWR, 0644)) == -1) {
-        log_error("parrot_files.c", "backup_files", "open", 76);
+        log_error("parrot_files.c", "backup_files", "open", 95);
         return errno;
     }
 
