@@ -8,9 +8,13 @@ from gi.repository import GObject
 from dbus.mainloop.glib import DBusGMainLoop
 
 
+DIR_MASK = 0x0
+FIL_MASK = 0x1
+
 # user test path: edit this variable to hold any watch you'd like to test
 user_test_path = ''
-
+TEST_MASK = ... # set to one of the masks above depending on the user_test_path
+                # being either a directory or file to watch.
 
 def callback(access_time):
     print time.ctime(access_time)
