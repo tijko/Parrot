@@ -59,7 +59,7 @@ gboolean parrot_obj_current_watches(ParrotObject *p_obj,
     current_watches = g_new(char *, watch_num + 1);
 
     for (watch=0; watch < watch_num; watch++)
-        current_watches[watch] = g_strdup(current_watch[watch]->dir);
+        current_watches[watch] = g_strdup(current_watch[watch]->path);
 
     current_watches[watch] = NULL;
     dbus_g_method_return(ctxt, current_watches);
