@@ -12,8 +12,8 @@ DIR_MASK = 0x0
 FIL_MASK = 0x1
 
 # user test path: edit this variable to hold any watch you'd like to test
-user_test_path = ''
-TEST_MASK = ... # set to one of the masks above depending on the user_test_path
+user_test_path = '/home/tijko/documents/testing/patching/patch_steps.txt'
+TEST_MASK = FIL_MASK # set to one of the masks above depending on the user_test_path
                 # being either a directory or file to watch.
 
 def callback(access_time):
@@ -35,7 +35,7 @@ def parrot_proxy():
     watch_method = proxy.get_dbus_method('current_watches')
     add_watch = proxy.get_dbus_method('add_watch')
     print "Calling 'add_watch' method..."
-    add_watch(user_test_path, 1)
+    add_watch(user_test_path, TEST_MASK)
     print "Calling 'current_watch' method..."
     cur_watch = watch_method() 
     print "Currently watched: %s" % cur_watch
