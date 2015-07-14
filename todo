@@ -1,15 +1,29 @@
--- handle non-fatal errors in a separate error-logging function?
+--**-- **--** --**--
+====================
+||     ORDER      ||
+====================
+--**-- **--** --**--
+
+
+add extra parameter to add_watch function --> backup_directory
+add field to parrot_watch struct --> backup_directory
+
+include guards
 
 -- comments
 
-systemd timesout d-feet
+-- handle non-fatal errors in a separate error-logging function?
 
-forking -- when done with one fork (only one process is being created but, several threads used)
-           with two forks no process.  Systemd ends the process and with one forking happends?
-
-Hash table of connections and other data
+__LINE__ __FILE__ macros to log_errors
 
 
 how many clients are assigned to receive a signal?
 
 more detailed signal data passed (i.e. file name, type of access)
+
+persistant watches --> on startup check a log or config file to see if watch is to be started again
+add method to control this.
+
+systemd timesout d-feet
+
+Hash table of connections and other data
