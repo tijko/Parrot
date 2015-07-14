@@ -16,10 +16,15 @@ include guards
 
 __LINE__ __FILE__ macros to log_errors
 
+README
+
+build system
 
 how many clients are assigned to receive a signal?
 
 more detailed signal data passed (i.e. file name, type of access)
+
+forking -- check forking from systemd service file
 
 persistant watches --> on startup check a log or config file to see if watch is to be started again
 add method to control this.
