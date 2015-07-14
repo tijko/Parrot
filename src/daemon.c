@@ -17,30 +17,29 @@ int parrot_daemon(void)
     pid_t pid;
     int pid_file_ret;
 
-    pid = fork();  // first fork 
+    pid = fork();
     if (pid == -1) {
         log_error("daemon.c", "parrot_daemon", "fork", 20);
-        return -1; // if fork returned -1, return error
+        return -1;
     }
 
     if (pid > 0) 
         exit(0);         // if pid is greater than 0 than we are in the parent
-                         // process and exit gracefully
 
-    umask(0);            // set up process file mode
+    umask(0);
     pid_t sid;   
-    sid = setsid();      // create session ID
+    sid = setsid();
     if (sid == -1) {
         log_error("daemon.c", "parrot_daemon", "setsid", 32);
         return -1;
     }
 
-    if ((chdir("/")) == -1) { // change directory to root "/"
+    if ((chdir("/")) == -1) {
         log_error("daemon.c", "parrot_daemon", "chdir", 38);
         return -1;
     }
 
-    pid = fork();  // second fork
+    pid = fork();
     if (pid == -1) {
         log_error("daemon.c", "parrot_daemon", "fork", 43);
         return -1;
@@ -55,7 +54,7 @@ int parrot_daemon(void)
         return -1;
     }
 
-    close(STDIN_FILENO); // close stdin, stdout, stderr
+    close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
 
