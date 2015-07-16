@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <glib.h>
 #include <time.h>
 #include <stdio.h>
@@ -39,9 +41,12 @@ enum {
     W_FIL
 };
 
+#define W_FLAG 0x1
+
 struct parrot_watch {
     int parrot_wd;
     int watch_type;
+    int watch_flag;
     int backup_path_len;
     void (*backup)(struct parrot_watch *accessed);
     char *watch_path;
