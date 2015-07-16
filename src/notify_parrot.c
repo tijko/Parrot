@@ -178,6 +178,7 @@ void set_evfile(struct parrot_watch *watch)
 
     watch->evfile = malloc(sizeof(char) * (strlen(prev_path) + 1));
     strcpy(watch->evfile, prev_path);
+    watch->watch_flag = 0;
     free(prev_path);
 }
 
@@ -215,8 +216,6 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
         if (event->mask != IN_ACCESS) 
             goto stop_events;            
 
-        log_event("event => ", 1, event->name);
-
         for (cur_watch=0; cur_watch < watch_num; cur_watch++) {
             if (current_watch[cur_watch]->parrot_wd == event->wd) {
                 memcpy(accessed, current_watch[cur_watch], sizeof(*accessed));
@@ -226,7 +225,17 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
                     accessed->evfile = malloc(sizeof(char) * 
                                               strlen(event->name) + 1);
                     strcpy(accessed->evfile, event->name);
+                    log_event("event => ", 1, accessed->evfile);
+                } else {
+                    if (current_watch[cur_watch]->watch_flag & W_FLAG) {
+                        current_watch[cur_watch]->watch_flag ^= W_FLAG;
+                        goto stop_events;
+                    } else {
+                        current_watch[cur_watch]->watch_flag |= W_FLAG;
+                        log_event("event => ", 1, accessed->evfile);
+                    }
                 }
+
                 break;
             }
         }
