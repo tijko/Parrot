@@ -14,8 +14,9 @@ void find_file(struct parrot_watch *accessed)
     char *backupname;
     int backup_err;
 
-    backupname = create_pathname(BACKUP_PATH, accessed->evfile, BACKUP_SIZE);
-    backup_err = backup_files(accessed->path, backupname);
+    backupname = create_pathname(accessed->backup_path, accessed->evfile,
+                                 accessed->backup_path_len);
+    backup_err = backup_files(accessed->watch_path, backupname);
     if (backup_err)
         log_error("parrot_files.c", "find_file", "backup_files", 18);
     else
@@ -31,15 +32,15 @@ void find_files(struct parrot_watch *accessed)
     
     struct dirent *dir_files;
 
-    if ((drect = opendir(accessed->path)) == NULL) 
+    if ((drect = opendir(accessed->watch_path)) == NULL) 
         log_error("parrot_files.c", "find_file", "opendir", 35);
 
     while ((dir_files = readdir(drect))) {
 
         if (dir_files->d_type == DT_REG && !strcmp(dir_files->d_name, accessed->evfile)) {
-            pathname = create_pathname(accessed->path, dir_files->d_name, 
-                                                   strlen(accessed->path) + 1);
-            backupname = create_pathname(BACKUP_PATH, dir_files->d_name, BACKUP_SIZE);            
+            pathname = create_pathname(accessed->watch_path, dir_files->d_name, 
+                                                   strlen(accessed->watch_path) + 1);
+            backupname = create_pathname(accessed->backup_path, dir_files->d_name, accessed->backup_path_len);
             backup_err = backup_files(pathname, backupname);
             if (backup_err) 
                 log_error("parrot_files.c", "find_files", "backup_files", 44);
