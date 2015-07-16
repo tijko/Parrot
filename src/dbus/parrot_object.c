@@ -21,7 +21,8 @@ gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time);
 gboolean parrot_obj_current_watches(ParrotObject *p_obj, 
                                     DBusGMethodInvocation *ctxt);
 
-gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, int mask,
+gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, 
+                              char *backup_path, int mask,
                               DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
@@ -59,7 +60,7 @@ gboolean parrot_obj_current_watches(ParrotObject *p_obj,
     current_watches = g_new(char *, watch_num + 1);
 
     for (watch=0; watch < watch_num; watch++)
-        current_watches[watch] = g_strdup(current_watch[watch]->path);
+        current_watches[watch] = g_strdup(current_watch[watch]->watch_path);
 
     current_watches[watch] = NULL;
     dbus_g_method_return(ctxt, current_watches);
@@ -68,14 +69,15 @@ gboolean parrot_obj_current_watches(ParrotObject *p_obj,
     return TRUE;
 }
 
-gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, int mask,
+gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, 
+                              char *backup_path, int mask,
                               DBusGMethodInvocation *ctxt)
 {
     char *sender;
 
     sender = dbus_g_method_get_sender(ctxt);
 
-    parrot_add_watch(watch, mask);
+    parrot_add_watch(watch, backup_path, mask);
     dbus_g_method_return(ctxt);
 
     g_free(sender);
