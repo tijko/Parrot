@@ -23,6 +23,7 @@
     <method name="add_watch">
         <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
         <arg type="s" name="watch" direction="in" />
+        <arg type="s" name="backup_path" direction="in" />
         <arg type="i" name="mask" direction="in" />
     </method>
 
