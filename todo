@@ -4,10 +4,6 @@
 ====================
 --**-- **--** --**--
 
-
-add extra parameter to add_watch function --> backup_directory
-add field to parrot_watch struct --> backup_directory
-
 include guards
 
 -- comments
@@ -24,7 +20,7 @@ how many clients are assigned to receive a signal?
 
 more detailed signal data passed (i.e. file name, type of access)
 
-forking -- check forking from systemd service file
+forking -- systemd service message of supervising process not the child
 
 persistant watches --> on startup check a log or config file to see if watch is to be started again
 add method to control this.
