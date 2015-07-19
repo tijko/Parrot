@@ -1,9 +1,6 @@
 #define _GNU_SOURCE
 
-#include <fcntl.h>
-#include <errno.h>
 #include <limits.h>
-#include <sys/stat.h>
 #include <sys/types.h>
 
 #include "parrot.h"
