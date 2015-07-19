@@ -1,6 +1,3 @@
-#include <fcntl.h>
-#include <sys/stat.h>
-
 #include "parrot.h"
 
 
