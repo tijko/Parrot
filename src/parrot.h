@@ -1,7 +1,10 @@
 #define _GNU_SOURCE
 
+#ifndef PARROT_H
+
 #include <glib.h>
 #include <time.h>
+#include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -9,6 +12,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <sys/stat.h>
 #include <dbus/dbus.h>
 #include <sys/select.h>
 #include <sys/socket.h>
@@ -157,3 +161,5 @@ void cleanup(int signo);
 
 // Register the D-Bus parrot object
 void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj);
+
+#endif
