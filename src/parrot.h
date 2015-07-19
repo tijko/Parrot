@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
 #ifndef PARROT_H
+#define PARROT_H
 
 #include <glib.h>
 #include <time.h>
