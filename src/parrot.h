@@ -152,7 +152,7 @@ int events_in(int highest_fd, fd_set *watchfds);
 
 // Logs any errors and their names to parrot log.
 void log_error(const char *file_name, const char *func, 
-               const char *call, int line); 
+               const char *call, int line, int error); 
 
 // Logs any event and the mask of that event to the parrot log.
 void log_event(char *event_msg, int descriptors, ...);
