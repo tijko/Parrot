@@ -1,8 +1,10 @@
 #include <systemd/sd-journal.h>
 
+#include "../parrot.h"
+
 
 void log_error(const char *file_name, const char *func, 
-               const char *call, int line)
+               const char *call, int line, int error)
 {
     /* 
      * Generic error logging function.
@@ -13,6 +15,6 @@ void log_error(const char *file_name, const char *func,
      *
      */
 
-    sd_journal_print(LOG_ERR, "ERROR :: FILE: %s FUNC: %s CALL: %s LINE: %d", 
-                                                 file_name, func, call, line);
+    sd_journal_print(LOG_ERR, "ERROR :: FILE: %s FUNC: %s CALL: %s LINE: %d MSG: %s", 
+                               file_name, func, call, line, strerror(error));
 }
