@@ -15,7 +15,7 @@ int notify_parrot_init(void)
 
     parrot_gdbus_obj = malloc(sizeof *parrot_gdbus_obj);
     if (parrot_gdbus_obj == NULL) {
-        log_error("notify_parrot.c", "notify_parrot_init", "malloc", 18);
+        log_error(__FILE__, "notify_parrot_init", "malloc", __LINE__, errno);
         return -1;
     }
 
@@ -27,7 +27,8 @@ int notify_parrot_init(void)
                                                    parrot_gdbus_obj);
 
     if ((parrot_inotify_instance = inotify_init()) == -1) {
-        log_error("notify_parrot.c", "notify_parrot_init", "inotify_init", 31);
+        log_error(__FILE__, "notify_parrot_init", "inotify_init", 
+                  __LINE__, errno);
         return -1;
     }
 
@@ -63,12 +64,12 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
         FD_ZERO(&watchfds);
 
         if (change == -1) {
-            log_error("notify_parrot.c", "parrot_mainloop", "events_in", 64);
+            log_error(__FILE__, "parrot_mainloop", "events_in", __LINE__, errno);
             return;
         } else if (change) {
             if ((status = read(parrot_inotify_instance, 
                                    buffer, EVT_BUF_SIZE)) < 0) {
-                log_error("notify_parrot.c", "parrot_mainloop", "read", 71);
+                log_error(__FILE__, "parrot_mainloop", "read", __LINE__, errno);
                 return;
             }
 
@@ -97,29 +98,29 @@ int parrot_add_watch(char *watch_path, char *backup_path, int mask)
         if (f_open == -1 || d_open != -1) {
             close(f_open);
             close(d_open);
-            log_error("notify_parrot.c", "parrot_add_watch", "open", 93);
+            log_error(__FILE__, "parrot_add_watch", "open", __LINE__, errno);
             return -1;
         }
     } else {
         d_open = open(watch_path, O_RDONLY | O_DIRECTORY);
         if (d_open == -1) {
-            log_error("notify_parrot.c", "parrot_add_watch", "open", 100);
+            log_error(__FILE__, "parrot_add_watch", "open", __LINE__, errno);
             return -1;
         }
     }
 
     new_watch = malloc(sizeof *new_watch);
     if (new_watch == NULL) {
-        log_error("notify_parrot.c", "parrot_add_watch",
-                  "malloc", 107);
+        log_error(__FILE__, "parrot_add_watch",
+                  "malloc", __LINE__, errno);
         return -1;
     }
 
     if ((watch = inotify_add_watch(parrot_inotify_instance, 
                                    watch_path, IN_ACCESS)) == -1) {
         free(new_watch);
-        log_error("notify_parrot.c", "parrot_add_watch", 
-                  "inotify_add_watch", 114);
+        log_error(__FILE__, "parrot_add_watch", 
+                  "inotify_add_watch", __LINE__, errno);
         return -1;
     }
 
@@ -204,7 +205,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
     events = 0;
     accessed = malloc(sizeof *accessed);
     if (accessed == NULL) {
-        log_error("notify_parrot.c", "parse_events", "malloc", 173);
+        log_error(__FILE__, "parse_events", "malloc", __LINE__, errno);
         goto stop_events;
     }
 
@@ -243,7 +244,7 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
         parrot_obj_accessed(p_obj, (int) access_time);            
 
         if (backup) 
-            log_error("notify_parrot.c", "parse_events", "find_file", 195);
+            log_error(__FILE__, "parse_events", "find_file", __LINE__, errno);
 
         events += EVT_SIZE + event->len;
     }
