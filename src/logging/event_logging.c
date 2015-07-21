@@ -16,7 +16,7 @@ void log_event(char *event_msg, int descriptors, ...)
         tmp = NULL;
 
         if (msg == NULL) {
-            log_error("event_logging.c", "log_event", "malloc", 15);
+            log_error(__FILE__, "log_event", "malloc", __LINE__, errno);
             return;
         }
     
@@ -28,7 +28,7 @@ void log_event(char *event_msg, int descriptors, ...)
             tmp = realloc(msg, strlen(msg) + strlen(event) + 1);
 
             if (tmp == NULL) {
-                log_error("event_logging.c", "log_event", "realloc", 27);
+                log_error(__FILE__, "log_event", "realloc", __LINE__, errno);
                 free(msg);
                 return;
             }
