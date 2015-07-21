@@ -16,7 +16,7 @@ int parrot_daemon(void)
 
     pid = fork();
     if (pid == -1) {
-        log_error("daemon.c", "parrot_daemon", "fork", 20);
+        log_error(__FILE__, "parrot_daemon", "fork", __LINE__, errno);
         return -1;
     }
 
@@ -27,18 +27,18 @@ int parrot_daemon(void)
     pid_t sid;   
     sid = setsid();
     if (sid == -1) {
-        log_error("daemon.c", "parrot_daemon", "setsid", 32);
+        log_error(__FILE__, "parrot_daemon", "setsid", __LINE__, errno);
         return -1;
     }
 
     if ((chdir("/")) == -1) {
-        log_error("daemon.c", "parrot_daemon", "chdir", 38);
+        log_error(__FILE__, "parrot_daemon", "chdir", __LINE__, errno);
         return -1;
     }
 
     pid = fork();
     if (pid == -1) {
-        log_error("daemon.c", "parrot_daemon", "fork", 43);
+        log_error(__FILE__, "parrot_daemon", "fork", __LINE__, errno);
         return -1;
     }
 
@@ -47,7 +47,7 @@ int parrot_daemon(void)
 
     pid_file_ret = create_pid_file();
     if (pid_file_ret == -1) {
-        log_error("daemon.c", "parrot_daemon", "create_pid_file", 45);
+        log_error(__FILE__, "parrot_daemon", "create_pid_file", __LINE__, errno);
         return -1;
     }
 
@@ -72,14 +72,14 @@ int create_pid_file(void)
 
     runtime_dir = getenv(XDG_RUNTIME_DIR);
     if (runtime_dir == NULL) {
-        log_error("daemon.c", "create_pid_file", "getenv", 68);
+        log_error(__FILE__, "create_pid_file", "getenv", __LINE__, errno);
         return -1;
     }
 
     pathlen = strlen(runtime_dir) + strlen(PARROT_PID_PATH) + 1;
     user_path = malloc(sizeof(char) * pathlen);
     if (user_path == NULL) {
-        log_error("daemon.c", "create_pid_file", "malloc", 84);
+        log_error(__FILE__, "create_pid_file", "malloc", __LINE__, errno);
         return -1;
     }
 
@@ -87,7 +87,7 @@ int create_pid_file(void)
 
     pid_file_fd = open(user_path, O_CREAT | O_RDWR, 0666);
     if (pid_file_fd == -1) {
-        log_error("daemon.c", "create_pid_file", "open", 92);
+        log_error(__FILE__, "create_pid_file", "open", __LINE__, errno);
         return -1;
     }
 
