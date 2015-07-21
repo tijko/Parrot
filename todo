@@ -4,17 +4,9 @@
 ====================
 --**-- **--** --**--
 
-include guards
-
 -- comments
 
 -- handle non-fatal errors in a separate error-logging function?
-
-__LINE__ __FILE__ macros to log_errors
-
-README
-
-build system
 
 how many clients are assigned to receive a signal?
 
