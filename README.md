@@ -1,6 +1,8 @@
 Parrot
 ======
 
+Parrot is a service that backs up files from a monitored file/directory.
+
 ####description
 
 Parrot runs as a systemd user service and also as a dbus service.  Parrot's dbus 
@@ -31,9 +33,6 @@ the epoch whenever a file in the watch directory is accessed.  This signal can
 easily be logged in whatever form needed or some other form of action can be 
 take place such as callbacks to extend any additional functionality that might
 be called for.
-
-####usage
-
 
 ####setup
 
