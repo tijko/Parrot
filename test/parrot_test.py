@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import os
 
 import dbus.service
 from gi.repository import GObject
@@ -11,18 +12,27 @@ from dbus.mainloop.glib import DBusGMainLoop
 DIR_MASK = 0x0
 FIL_MASK = 0x1
 
-# user test path: edit this variable to hold any watch you'd like to test
-user_test_path = '/home/tijko/documents/testing/patching/patch_steps.txt'
-TEST_MASK = FIL_MASK # set to one of the masks above depending on the user_test_path
-                # being either a directory or file to watch.
+TEST_MASK = FIL_MASK
 
+curpath = os.getcwd()
+
+
+def create_testfile():
+    with open(os.path.join(curpath, 'parrot_test_file'), 'w+') as f:
+        f.write('parrot test file...')
+
+def create_testdir():
+    testdir = os.path.join(curpath, 'parrot_test_dir')
+    os.mkdir(testdir)
+    
 def callback(access_time):
     print time.ctime(access_time)
 
 def parrot_proxy():
-    if not user_test_path:
-        print 'Error: must set "user_test_path" to valid path'
-        return
+    test_path = os.path.join(curpath, 'parrot_test_file')
+    test_dir = os.path.join(curpath, 'parrot_test_dir/')
+    create_testfile()
+    create_testdir()
     conn = dbus.bus.BusConnection(
                     'unix:path=/run/user/1000/dbus/user_bus_socket',
                      mainloop=DBusGMainLoop()
@@ -35,7 +45,7 @@ def parrot_proxy():
     watch_method = proxy.get_dbus_method('current_watches')
     add_watch = proxy.get_dbus_method('add_watch')
     print "Calling 'add_watch' method..."
-    add_watch(user_test_path, TEST_MASK)
+    add_watch(test_path, test_dir, TEST_MASK)
     print "Calling 'current_watch' method..."
     cur_watch = watch_method() 
     print "Currently watched: %s" % cur_watch
