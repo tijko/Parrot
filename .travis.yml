@@ -1,6 +1,9 @@
 language: c
 
-before_script:
+before_install:
+    - sudo apt-get update -qq
+
+install:
     - sudo apt-get install vala-dbus-binding-tool
     - sudo apt-get install dbus-glib
 
