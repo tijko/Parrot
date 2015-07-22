@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    RUNNING = true;
+    running = true;
     notify_flag = notify_parrot_init();
 
     if (notify_flag == -1)
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 
 void cleanup(int signo)
 {
-    RUNNING = false;
+    running = false;
     sleep(1); // a small sleep to allow enough time for cleanup.
     log_event("signal interrupt", 0);
     signal(SIGINT, SIG_DFL);
