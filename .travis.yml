@@ -1,5 +1,9 @@
 language: c
 
+before-install:
+    - sudo apt-get install dbus-binding-tool
+    - sudo apt-get install dbus-glib
+
 script:
     - make
     - sudo make install
