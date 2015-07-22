@@ -20,7 +20,7 @@
 #include <dbus/dbus-glib-lowlevel.h>
 
 
-bool RUNNING;
+bool running;
 
 /*
     Setting the MAX_WATCHES will depend on how many watches are currently set
