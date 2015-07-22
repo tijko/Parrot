@@ -57,7 +57,7 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
     fd_set watchfds;
     FD_ZERO(&watchfds);
 
-    while (RUNNING) {
+    while (running) {
 
         FD_SET(parrot_inotify_instance, &watchfds);
         change = events_in(parrot_inotify_instance + 1, &watchfds);
