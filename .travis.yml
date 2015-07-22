@@ -1,6 +1,6 @@
 language: c
 
-before-install:
+before_script:
     - sudo apt-get install dbus-binding-tool
     - sudo apt-get install dbus-glib
 
