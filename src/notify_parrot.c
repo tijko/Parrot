@@ -49,6 +49,16 @@ void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj)
     log_event("clean up and close connections", 0);
 }
 
+void close_watch(struct parrot_watch *watch)
+{
+    close(watch->parrot_wd);
+    free(watch->watch_path);
+    free(watch->backup_path);
+    free(watch->evfile);
+    if (watch_num == 1)
+        parrot_inotify_instance = inotify_init();    
+}
+
 void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
 {
     int change, status;
@@ -68,7 +78,7 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
             return;
         } else if (change) {
             if ((status = read(parrot_inotify_instance, 
-                                   buffer, EVT_BUF_SIZE)) < 0) {
+                                   buffer, EVT_BUF_SIZE - 1)) < 0) {
                 log_error(__FILE__, "parrot_mainloop", "read", __LINE__, errno);
                 return;
             }
@@ -147,8 +157,7 @@ void parrot_remove_watch(char *watch_path)
 
     for (watch=0; watch < watch_num; watch++) {
         if (!strcmp(watch_path, current_watch[watch]->watch_path)) {
-            free(current_watch[watch]->watch_path);
-            free(current_watch[watch]);
+            close_watch(current_watch[watch]);
             current_watch[watch] = NULL;
             log_event("watch removed => ", 1, watch_path);
             for (idx=watch; watch < watch_num; watch++) 
