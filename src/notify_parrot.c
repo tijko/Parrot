@@ -51,12 +51,11 @@ void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj)
 
 void close_watch(struct parrot_watch *watch)
 {
-    close(watch->parrot_wd);
+    // XXX read off rest of events 
+    inotify_rm_watch(parrot_inotify_instance, watch->parrot_wd);
     free(watch->watch_path);
     free(watch->backup_path);
     free(watch->evfile);
-    if (watch_num == 1)
-        parrot_inotify_instance = inotify_init();    
 }
 
 void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
