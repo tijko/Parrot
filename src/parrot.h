@@ -129,6 +129,8 @@ void set_evfile(struct parrot_watch *watch);
 
 void parrot_remove_watch(char *path);
 
+void close_watch(struct parrot_watch *watch);
+
 void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj);
 
 // Function to parse the inotify_event structs and pass on the relavent 
