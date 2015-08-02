@@ -22,7 +22,7 @@ gboolean parrot_obj_current_watches(ParrotObject *p_obj,
                                     DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, 
-                              char *backup_path, int mask,
+                              char *backup_path, int watch_mask,
                               DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
@@ -70,14 +70,14 @@ gboolean parrot_obj_current_watches(ParrotObject *p_obj,
 }
 
 gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, 
-                              char *backup_path, int mask,
+                              char *backup_path, int watch_mask,
                               DBusGMethodInvocation *ctxt)
 {
     char *sender;
 
     sender = dbus_g_method_get_sender(ctxt);
 
-    parrot_add_watch(watch, backup_path, mask);
+    parrot_add_watch(watch, backup_path, watch_mask);
     dbus_g_method_return(ctxt);
 
     g_free(sender);
