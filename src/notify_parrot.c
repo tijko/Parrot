@@ -160,6 +160,8 @@ int parrot_add_watch(char *watch_path, char *backup_path, int mask)
         return -1;
     }
 
+    strcpy(new_watch->backup_path, backup_path);
+
     new_watch->parrot_wd = watch;
     new_watch->watch_type = mask;
     new_watch->backup = mask & W_FIL ? find_file : find_files;
