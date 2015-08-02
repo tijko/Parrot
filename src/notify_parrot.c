@@ -90,18 +90,14 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
     parrot_cleanup(parrot_gdbus_obj);
 }
 
-int parrot_add_watch(char *watch_path, char *backup_path, int mask)
+int parrot_add_watch(char *watch_path, char *backup_path, int watch_mask)
 {
     int watch, f_open, d_open;
     struct parrot_watch *new_watch;
-    char *add_slash_path = NULL;
 
-    int backup_path_len = strlen(backup_path);
-    if (backup_path[backup_path_len - 1] != '/') {
-        add_slash_path = malloc(sizeof(char) * backup_path_len + 2);
-        snprintf(add_slash_path, backup_path_len + 2, "%s/", backup_path);
-        backup_path = add_slash_path;
-        backup_path_len += 1;        
+    if (watch_mask != W_FIL && watch_mask != W_DIR) {
+        log_error(__FILE__, "parrot_add_watch", "bad watch mask", __LINE__, EINVAL);
+        return -1;
     }
 
     d_open = open(backup_path, O_RDONLY | O_DIRECTORY);
@@ -110,7 +106,7 @@ int parrot_add_watch(char *watch_path, char *backup_path, int mask)
     else
         close(d_open);
  
-    if (mask & W_FIL) {
+    if (watch_mask & W_FIL) {
         f_open = open(watch_path, O_RDONLY);
         d_open = open(watch_path, O_RDONLY | O_DIRECTORY);    
         if (f_open == -1 || d_open != -1) {
@@ -142,7 +138,11 @@ int parrot_add_watch(char *watch_path, char *backup_path, int mask)
         return -1;
     }
 
-    new_watch->watch_path = malloc(sizeof(char) * (strlen(watch_path) + 1));
+    int path_len = strlen(watch_path);
+    if (watch_path[path_len - 1] != '/' && (watch_mask & W_DIR))
+        path_len += 1;
+
+    new_watch->watch_path = malloc(sizeof(char) * path_len + 1);
     if (new_watch->watch_path == NULL) {
         log_error(__FILE__, "parrot_add_watch",
                   "malloc", __LINE__, errno);
@@ -150,9 +150,18 @@ int parrot_add_watch(char *watch_path, char *backup_path, int mask)
     }
 
     strcpy(new_watch->watch_path, watch_path);
+    path_len = strlen(watch_path);
+    if (watch_path[path_len - 1] != '/' && (watch_mask & W_DIR)) {
+        new_watch->watch_path[path_len] = '/';
+        new_watch->watch_path[path_len + 1] = '\0';
+    }
 
+    int backup_path_len = strlen(backup_path);
+    if (backup_path[backup_path_len - 1] != '/')
+        new_watch->backup_path_len = backup_path_len + 2;
+    else
+        new_watch->backup_path_len = backup_path_len + 1;
 
-    new_watch->backup_path_len = backup_path_len + 1;
     new_watch->backup_path = malloc(sizeof(char) * new_watch->backup_path_len);
     if (new_watch->backup_path == NULL) {
         log_error(__FILE__, "parrot_add_watch",
@@ -161,10 +170,14 @@ int parrot_add_watch(char *watch_path, char *backup_path, int mask)
     }
 
     strcpy(new_watch->backup_path, backup_path);
+    if (backup_path[backup_path_len - 1] != '/') {
+        new_watch->backup_path[backup_path_len] = '/';
+        new_watch->backup_path[backup_path_len + 1] = '\0';
+    }
 
     new_watch->parrot_wd = watch;
-    new_watch->watch_type = mask;
-    new_watch->backup = mask & W_FIL ? find_file : find_files;
+    new_watch->watch_type = watch_mask;
+    new_watch->backup = watch_mask & W_FIL ? find_file : find_files;
 
     if (new_watch->watch_type & W_FIL) 
         set_evfile(new_watch);
@@ -173,9 +186,6 @@ int parrot_add_watch(char *watch_path, char *backup_path, int mask)
 
     current_watch[watch_num++] = new_watch;
     log_event("watch added => ", 1, watch_path);
-
-    if (add_slash_path != NULL)
-        free(add_slash_path);
 
     return 0;
 }
