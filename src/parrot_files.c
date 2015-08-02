@@ -75,6 +75,8 @@ int backup_files(char *file_path, char *backup_path)
     int file_size = (int) f_buffer.st_size;
     int r_file, f_read, w_file;
 
+    log_event("path", 1, file_path);
+
     if ((r_file = open(file_path, O_RDONLY | O_NOATIME)) == -1) {
         log_error(__FILE__, "backup_files", "open", __LINE__, errno);
         return errno;
