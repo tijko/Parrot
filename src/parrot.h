@@ -42,7 +42,7 @@ bool running;
 
 // Parrot mask for either type of watch to set, directory or file watch.
 enum {
-    W_DIR,
+    W_DIR=1,
     W_FIL
 };
 
@@ -95,7 +95,7 @@ gboolean parrot_obj_current_watches(ParrotObject *p_obj,
                                     DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_add_watch(ParrotObject *p_obj, char *watch, 
-                              char *backup_path, int mask,
+                              char *backup_path, int watch_mask,
 			                  DBusGMethodInvocation *ctxt);
 
 gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
@@ -123,7 +123,7 @@ int notify_parrot_init(void);
 
 void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj);
 
-int parrot_add_watch(char *path, char *backup_path, int mask);
+int parrot_add_watch(char *path, char *backup_path, int watch_mask);
 
 void set_evfile(struct parrot_watch *watch);
 
