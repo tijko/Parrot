@@ -9,8 +9,8 @@ from gi.repository import GObject
 from dbus.mainloop.glib import DBusGMainLoop
 
 
-DIR_MASK = 0x0
-FIL_MASK = 0x1
+DIR_MASK = 0x1
+FIL_MASK = 0x2
 
 TEST_MASK = FIL_MASK
 
