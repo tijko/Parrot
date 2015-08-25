@@ -16,8 +16,15 @@ void find_file(struct parrot_watch *accessed)
     backup_err = backup_files(accessed->watch_path, backupname);
     if (backup_err)
         log_error(__FILE__, "find_file", "backup_files", __LINE__, errno);
-    else
-        log_event("backing up => ", 1, accessed->evfile);
+    else {
+        char *fmt = fmt_event(2);
+        char *logevent_buffer;
+        EVENT(&logevent_buffer, fmt, "backing up => ", accessed->evfile);
+        log_event(logevent_buffer);
+        free(fmt);
+        free(logevent_buffer);
+    }
+
     free(backupname);
 }
 
@@ -45,8 +52,14 @@ void find_files(struct parrot_watch *accessed)
             if (backup_err) 
                 log_error(__FILE__, "find_files", "backup_files", 
                           __LINE__, errno);
-            else
-                log_event("backing up => ", 1, dir_files->d_name);
+            else {
+                char *fmt = fmt_event(2);
+                char *logevent_buffer;
+                EVENT(&logevent_buffer, fmt, "backingup => ", dir_files->d_name);
+                log_event(logevent_buffer);
+                free(fmt);
+                free(logevent_buffer);
+            }
 
             free(pathname);
             free(backupname);
@@ -75,7 +88,12 @@ int backup_files(char *file_path, char *backup_path)
     int file_size = (int) f_buffer.st_size;
     int r_file, f_read, w_file;
 
-    log_event("path", 1, file_path);
+    char *fmt = fmt_event(2);
+    char *logevent_buffer;
+    EVENT(&logevent_buffer, fmt, "path ", file_path);
+    log_event(logevent_buffer);
+    free(fmt);
+    free(logevent_buffer);
 
     if ((r_file = open(file_path, O_RDONLY | O_NOATIME)) == -1) {
         log_error(__FILE__, "backup_files", "open", __LINE__, errno);
