@@ -156,8 +156,15 @@ int events_in(int highest_fd, fd_set *watchfds);
 void log_error(const char *file_name, const char *func, 
                const char *call, int line, int error); 
 
+#define FMT "\%s"
+#define FMTSIZE 4
+
+char *fmt_event(int descriptors);
+
+#define EVENT(buf, fmt, ...) asprintf(buf, fmt, __VA_ARGS__)
+
 // Logs any event and the mask of that event to the parrot log.
-void log_event(char *event_msg, int descriptors, ...);
+void log_event(char *event_msg);
 
 // Signal handler to complete cleanup if any interrupts are received.
 void cleanup(int signo);
