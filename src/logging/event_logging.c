@@ -4,45 +4,23 @@
 #include "../parrot.h"
 
 
-void log_event(char *event_msg, int descriptors, ...)
+char *fmt_event(int descriptors)
 {
-    if (descriptors) {
+    char *fmt = calloc(sizeof(char) * (FMTSIZE * descriptors), sizeof(char));
 
-        int i;
-        va_list log_args;
-        char *event, *msg, *tmp;
-
-        msg = malloc(sizeof(char) * strlen(event_msg) + 1);
-        tmp = NULL;
-
-        if (msg == NULL) {
-            log_error(__FILE__, "log_event", "malloc", __LINE__, errno);
-            return;
-        }
-    
-        snprintf(msg, strlen(event_msg) + 1, "%s", event_msg);
-        va_start(log_args, descriptors);
-
-        for (i=0; i < descriptors; i++) {
-            event = va_arg(log_args, char *);                
-            tmp = realloc(msg, strlen(msg) + strlen(event) + 1);
-
-            if (tmp == NULL) {
-                log_error(__FILE__, "log_event", "realloc", __LINE__, errno);
-                free(msg);
-                return;
-            }
+    if (fmt == NULL) {
+        log_error(__FILE__, "fmt_event", "calloc", __LINE__, errno);
+        return NULL;
+    }
         
-            msg = tmp;            
-            tmp = NULL;
-            strcat(msg, event);
-        }
+    int i;
+    for (i=0; i < descriptors; i++)
+        strcat(fmt, FMT);
 
-        va_end(log_args);
+    return fmt;
+}
 
-        sd_journal_print(LOG_INFO, "PARROT: %s\n", msg);
-        free(msg);
-
-    } else 
-        sd_journal_print(LOG_INFO, "PARROT: %s\n", event_msg);
+void log_event(char *event_msg)
+{
+    sd_journal_print(LOG_INFO, "PARROT: %s\n", event_msg);
 }
