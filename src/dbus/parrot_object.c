@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-bindings.h>
 
@@ -116,9 +118,14 @@ void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj)
                   "dbus_g_bus_get", __LINE__, err->code);
     } else {
         addr = getenv("DBUS_SESSION_BUS_ADDRESS");
-        if (addr)
-            log_event("aquired bus address => ", 1, addr);
-        else
+        if (addr) {
+            char *fmt = fmt_event(2);
+            char *logevent_buffer;
+            EVENT(&logevent_buffer, fmt, "aquired bus address => ", addr);
+            log_event(logevent_buffer);
+            free(fmt);
+            free(logevent_buffer);
+        } else
             log_error(__FILE__, "register_parrot_obj", 
                       "getenv", __LINE__, errno);
     }
