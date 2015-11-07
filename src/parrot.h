@@ -167,7 +167,7 @@ char *fmt_event(int descriptors);
 void log_event(char *event_msg);
 
 // Signal handler to complete cleanup if any interrupts are received.
-void cleanup(int signo);
+void cleanup(int signal_number, siginfo_t *sigaction_info, void *ctxt);
 
 // Register the D-Bus parrot object
 void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj);
