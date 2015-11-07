@@ -6,8 +6,8 @@
 int main(int argc, char *argv[]) {
 
     int notify_flag;
-
-    if ((signal(SIGINT, cleanup)) == SIG_ERR) {
+    struct sigaction sa = { .sa_sigaction = cleanup, .sa_flags = SA_RESETHAND };
+    if ((sigaction(SIGINT, &sa, NULL)) < 0) {
         log_error(__FILE__, "main", "signal", __LINE__, errno);
         return 0;
     }
@@ -28,11 +28,10 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void cleanup(int signo)
+void cleanup(int signal_number, siginfo_t *sigaction_info, void *ctxt)
 {
     running = false;
     sleep(1); // a small sleep to allow enough time for cleanup.
     log_event("signal interrupt");
-    signal(SIGINT, SIG_DFL);
-    raise(signo);
+    raise(signal_number);
 }
