@@ -1,6 +1,9 @@
 #define _GNU_SOURCE
 
+#include <dirent.h>
 #include <limits.h>
+#include <stddef.h>
+#include <stdlib.h>
 #include <sys/types.h>
 
 #include "parrot.h"
@@ -34,19 +37,24 @@ void find_files(struct parrot_watch *accessed)
     DIR *drect;
     int backup_err;
     
-    struct dirent *dir_files;
+    size_t dirent_size = offsetof(struct dirent, d_name) + MAX_PATH + 1;
+    struct dirent *dir_results;
+    struct dirent *dir_entries = malloc(sizeof(char) * dirent_size);
 
     if ((drect = opendir(accessed->watch_path)) == NULL) 
         log_error(__FILE__, "find_file", "opendir", __LINE__, errno);
 
-    while ((dir_files = readdir(drect))) {
+    while ((readdir_r(drect, dir_entries, &dir_results)) != -1) {
 
-        if (dir_files->d_type == DT_REG && 
-            !strcmp(dir_files->d_name, accessed->evfile)) {
-            pathname = create_pathname(accessed->watch_path, dir_files->d_name,
+        if (dir_results == NULL)
+            break;
+
+        if (dir_entries->d_type == DT_REG && 
+            !strcmp(dir_entries->d_name, accessed->evfile)) {
+            pathname = create_pathname(accessed->watch_path, dir_entries->d_name,
                                        strlen(accessed->watch_path) + 1);
             backupname = create_pathname(accessed->backup_path, 
-                                         dir_files->d_name, 
+                                         dir_entries->d_name, 
                                          accessed->backup_path_len);
             backup_err = backup_files(pathname, backupname);
             if (backup_err) 
@@ -55,7 +63,7 @@ void find_files(struct parrot_watch *accessed)
             else {
                 char *fmt = fmt_event(2);
                 char *logevent_buffer;
-                EVENT(&logevent_buffer, fmt, "backingup => ", dir_files->d_name);
+                EVENT(&logevent_buffer, fmt, "backingup => ", dir_entries->d_name);
                 log_event(logevent_buffer);
                 free(fmt);
                 free(logevent_buffer);
@@ -65,6 +73,8 @@ void find_files(struct parrot_watch *accessed)
             free(backupname);
        }
     }
+
+    free(dir_entries);
 }
 
 char *create_pathname(char *dirname, char *filename, size_t pathsize)
