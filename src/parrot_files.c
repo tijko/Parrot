@@ -1,5 +1,7 @@
 #define _GNU_SOURCE
 
+#include <fcntl.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <limits.h>
 #include <stddef.h>
@@ -126,10 +128,51 @@ int backup_files(char *file_path, char *backup_path)
         return errno;
     }
 
+    set_parrot_lock(w_file);
     write(w_file, fd_buffer, file_size);
+    release_parrot_lock(w_file);
+
     close(w_file);
     close(r_file);
+
     free(fd_buffer);
 
     return 0;
+}
+
+void set_parrot_lock(int fd)
+{
+    struct flock parrot_lock;
+
+    parrot_lock.l_type = F_WRLCK;
+    parrot_lock.l_whence = SEEK_SET;
+    parrot_lock.l_start = 0;
+    parrot_lock.l_len = 0;
+
+    while ( 1 ) {
+
+        int ret = fcntl(fd, F_GETLK, &parrot_lock);
+
+        if (ret < 0)
+            return;
+        // handle errors
+
+        if (parrot_lock.l_type == F_UNLCK) {
+            parrot_lock.l_type = F_WRLCK;
+            fcntl(fd, F_SETLK, &parrot_lock);
+            return;
+        }
+    }
+}
+
+void release_parrot_lock(int fd)
+{
+    struct flock parrot_lock;
+
+    parrot_lock.l_type = F_UNLCK;
+    parrot_lock.l_whence = SEEK_SET;
+    parrot_lock.l_start = 0;
+    parrot_lock.l_len = 0;
+
+    fcntl(fd, F_SETLK, &parrot_lock);
 }
