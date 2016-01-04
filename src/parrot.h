@@ -151,6 +151,12 @@ char *create_pathname(char *dirname, char *filename, size_t pathsize);
 // Reads the old files and then writes the file data to the backup.
 int backup_files(char *file_path, char *backup_path);
 
+// Sets a file lock for the file being backed up.
+void set_parrot_lock(int fd);
+
+// Releases a lock for the file that was backed up.
+void release_parrot_lock(int fd);
+
 // Checks if events are able to be read from watch descriptor.
 int events_in(int highest_fd, fd_set *watchfds);
 
