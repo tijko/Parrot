@@ -40,6 +40,8 @@ bool running;
 // XXX Default max watches
 #define MAX_WATCHES 4096
 
+#define MAX_PATH 255
+
 // Parrot mask for either type of watch to set, directory or file watch.
 enum {
     W_DIR=1,
