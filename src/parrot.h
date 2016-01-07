@@ -119,6 +119,8 @@ int parrot_daemon(void);
 
 int create_pid_file(void);
 
+#define MAX_PID_STRLEN 10
+
 // This is the function that sets the inotify event loop.  The watch is added for 
 // the `file_dir_to_parrot` and will signal to backup on events.
 int notify_parrot_init(void);
