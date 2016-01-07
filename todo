@@ -4,8 +4,17 @@
 ====================
 --**-- **--** --**--
 
+
+-- the includes from the header files need adjustments
+
+-- readdir is *not* thread safe readdir_r
+
+-- file locks for performing reads and writes
+
 -- comments
 
+-- log backuppath name - watch type (e.g. dir or file)
+ 
 -- handle non-fatal errors in a separate error-logging function?
 
 how many clients are assigned to receive a signal?
@@ -20,3 +29,5 @@ add method to control this.
 systemd timesout d-feet
 
 Hash table of connections and other data
+
+poll instead
