@@ -1,5 +1,10 @@
 #define _GNU_SOURCE
 
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include <pthread.h>
 #include <sys/inotify.h>
 
