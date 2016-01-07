@@ -4,21 +4,11 @@
 #define PARROT_H
 
 #include <glib.h>
-#include <time.h>
-#include <errno.h>
 #include <stdio.h>
-#include <fcntl.h>
 #include <stdlib.h>
-#include <string.h>
-#include <dirent.h>
-#include <unistd.h>
 #include <stdbool.h>
-#include <sys/stat.h>
 #include <dbus/dbus.h>
-#include <sys/select.h>
-#include <sys/socket.h>
 #include <dbus/dbus-glib-lowlevel.h>
-
 
 bool running;
 
