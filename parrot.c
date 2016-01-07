@@ -1,4 +1,7 @@
+#include <errno.h>
+#include <unistd.h>
 #include <signal.h>
+#include <stdbool.h>
 
 #include "src/parrot.h"
 
