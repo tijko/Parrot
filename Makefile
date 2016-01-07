@@ -3,19 +3,19 @@ TARGET = parrot
 
 LOGDIR = src/logging
 DBUSDIR = src/dbus
-CDIR = $(shell pwd)
+CDIR := $(shell pwd)
 
 POBJ = $(CDIR)/src/dbus/parrot_object.h
 INTRO = $(CDIR)/introspection/parrot.xml
 
-SRC = $(wildcard src/*.c)
-LOG = $(wildcard $(LOGDIR)/*.c)
-DBUS = $(wildcard $(DBUSDIR)/*.c)
+SRC := $(wildcard src/*.c)
+LOG := $(wildcard $(LOGDIR)/*.c)
+DBUS := $(wildcard $(DBUSDIR)/*.c)
 
-SD = $(shell pkg-config --cflags --libs libsystemd-journal)
-GLIB = $(shell pkg-config --cflags --libs glib-2.0)
-DB = $(shell pkg-config --cflags --libs dbus-1)
-GB = $(shell pkg-config --cflags --libs dbus-glib-1)
+SD := $(shell pkg-config --cflags --libs libsystemd-journal)
+GLIB := $(shell pkg-config --cflags --libs glib-2.0)
+DB := $(shell pkg-config --cflags --libs dbus-1)
+GB := $(shell pkg-config --cflags --libs dbus-glib-1)
 
 FLAGS = -g -lpthread $(SD) -I./src -Wall $(GB) $(GLIB) $(DB) 
 
