@@ -1,6 +1,5 @@
 [Unit]
 Description=Parrot file/directory notification backup dbus service.
-After=dbus.service
 
 [Service]
 Type=forking
