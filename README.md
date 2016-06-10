@@ -34,15 +34,6 @@ easily be logged in whatever form needed or some other form of action can be
 take place such as callbacks to extend any additional functionality that might
 be called for.
 
-####setup
-
-Edit the `parrot.h` header file with the path to the directory you 
-wish to backup to.
-
-Be sure to include a trailing `/` on the pathname:
-
-    /home/user/path/to/backup_to/ <-- here
-
 ####install
 
 GCC is required to compile, to install run in the base directory:
