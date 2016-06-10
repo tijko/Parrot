@@ -12,7 +12,8 @@ SRC := $(wildcard src/*.c)
 LOG := $(wildcard $(LOGDIR)/*.c)
 DBUS := $(wildcard $(DBUSDIR)/*.c)
 
-SD := $(shell pkg-config --cflags --libs libsystemd-journal)
+#SD := $(shell pkg-config --cflags --libs libsystemd-journal)
+SD := -I/usr/include/systemd -I/usr/lib/systemd/ -lsystemd
 GLIB := $(shell pkg-config --cflags --libs glib-2.0)
 DB := $(shell pkg-config --cflags --libs dbus-1)
 GB := $(shell pkg-config --cflags --libs dbus-glib-1)
@@ -27,7 +28,6 @@ $(TARGET): $(TARGET).c $(SRC) $(LOG) $(DBUS)
 
 install:
 	cp $(TARGET) /usr/bin
-	mkdir /etc/systemd/system/user@.service.d/
 	cp $(CDIR)/systemd/dbus.conf /etc/systemd/system/user@.service.d/
 	cp $(CDIR)/conf/org.parrot.conf /etc/dbus-1/session.d/
 	cp $(CDIR)/systemd/parrot.service /etc/systemd/user/
