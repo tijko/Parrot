@@ -126,7 +126,7 @@ int backup_files(char *file_path, char *backup_path)
         return errno;
     }
 
-    if ((w_file = open(backup_path, O_CREAT | O_RDWR, 0644)) == -1) {
+    if ((w_file = open(backup_path, O_CREAT | O_RDWR, f_buffer.st_mode)) == -1) {
         log_error(__FILE__, "backup_files", "open", __LINE__, errno);
         return errno;
     }
