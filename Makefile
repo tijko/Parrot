@@ -27,7 +27,8 @@ $(TARGET): $(TARGET).c $(SRC) $(LOG) $(DBUS)
 
 install:
 	cp $(TARGET) /usr/bin
-	if [[ ! -d /etc/systemd/system/user@.service.d ]]; then \
+	if [[ ! -d /etc/systemd/system/user@.service.d ]]; \
+	then \
 		mkdir /etc/systemd/system/user@.service.d/; \
 	fi
 	cp $(CDIR)/systemd/dbus.conf /etc/systemd/system/user@.service.d/
