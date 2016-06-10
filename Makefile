@@ -28,6 +28,9 @@ $(TARGET): $(TARGET).c $(SRC) $(LOG) $(DBUS)
 
 install:
 	cp $(TARGET) /usr/bin
+	if [[ ! -d /etc/systemd/system/user@.service.d ]]; then \
+		mkdir /etc/systemd/system/user@.service.d/; \
+	fi
 	cp $(CDIR)/systemd/dbus.conf /etc/systemd/system/user@.service.d/
 	cp $(CDIR)/conf/org.parrot.conf /etc/dbus-1/session.d/
 	cp $(CDIR)/systemd/parrot.service /etc/systemd/user/
