@@ -98,38 +98,41 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
 
 int parrot_add_watch(char *watch_path, char *backup_path, int watch_mask)
 {
-    int watch, f_open, d_open;
-    struct parrot_watch *new_watch;
+    int watch;
 
     if (watch_mask != W_FIL && watch_mask != W_DIR) {
         log_error(__FILE__, "parrot_add_watch", "bad watch mask", __LINE__, EINVAL);
         return -1;
     }
 
-    d_open = open(backup_path, O_RDONLY | O_DIRECTORY);
+    int d_open = open(backup_path, O_RDONLY | O_DIRECTORY);
     if (d_open == -1)
         return -1;
-    else
-        close(d_open);
+    close(d_open);
  
     if (watch_mask & W_FIL) {
-        f_open = open(watch_path, O_RDONLY);
+        int f_open = open(watch_path, O_RDONLY);
         d_open = open(watch_path, O_RDONLY | O_DIRECTORY);    
+
+        close(f_open);
+        close(d_open);
+
         if (f_open == -1 || d_open != -1) {
-            close(f_open);
-            close(d_open);
             log_error(__FILE__, "parrot_add_watch", "open", __LINE__, errno);
             return -1;
         }
     } else {
         d_open = open(watch_path, O_RDONLY | O_DIRECTORY);
+
+        close(d_open);
+
         if (d_open == -1) {
             log_error(__FILE__, "parrot_add_watch", "open", __LINE__, errno);
             return -1;
         }
     }
 
-    new_watch = malloc(sizeof *new_watch);
+    struct parrot_watch *new_watch = malloc(sizeof *new_watch);
     if (new_watch == NULL) {
         log_error(__FILE__, "parrot_add_watch",
                   "malloc", __LINE__, errno);
