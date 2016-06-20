@@ -20,7 +20,7 @@ void find_file(struct parrot_watch *accessed)
                                        accessed->backup_path_len);
 
     int backup_err = backup_files(accessed->watch_path, backupname);
-    free(backupname)
+    free(backupname);
 
     if (backup_err) 
         log_error(__FILE__, "find_file", "backup_files", __LINE__, errno);
@@ -37,7 +37,6 @@ void find_files(struct parrot_watch *accessed)
 {
     char *pathname, *backupname;
     DIR *drect;
-    int backup_err;
     
     size_t dirent_size = offsetof(struct dirent, d_name) + MAX_PATH + 1;
     struct dirent *dir_results;
@@ -58,8 +57,7 @@ void find_files(struct parrot_watch *accessed)
             backupname = create_pathname(accessed->backup_path, 
                                          dir_entries->d_name, 
                                          accessed->backup_path_len);
-            backup_err = backup_files(pathname, backupname);
-            if (backup_err) 
+            if (backup_files(pathname, backupname))
                 log_error(__FILE__, "find_files", "backup_files", 
                           __LINE__, errno);
             else {
@@ -77,6 +75,7 @@ void find_files(struct parrot_watch *accessed)
     }
 
     free(dir_entries);
+    closedir(drect);
 }
 
 char *create_pathname(char *dirname, char *filename, size_t pathsize)
@@ -128,7 +127,7 @@ int backup_files(char *file_path, char *backup_path)
     if ((w_file = open(backup_path, O_CREAT | O_RDWR, f_buffer.st_mode)) == -1) {
         log_error(__FILE__, "backup_files", "open", __LINE__, errno);
         close(r_file);
-        close(r_read);
+        close(f_read);
         return errno;
     }
 
@@ -138,7 +137,7 @@ int backup_files(char *file_path, char *backup_path)
 
     close(w_file);
     close(r_file);
-    close(r_read);
+    close(f_read);
 
     free(fd_buffer);
 
