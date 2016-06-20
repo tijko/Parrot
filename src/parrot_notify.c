@@ -268,17 +268,16 @@ int events_in(int highest_fd, fd_set *watchfds)
 
 void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 {
-    int events, cur_watch;
+    int cur_watch;
     struct inotify_event *event;
-    struct parrot_watch *accessed;
 
     void *backup;
     time_t access_time;
 
     pthread_t backup_file;
 
-    events = 0;
-    accessed = malloc(sizeof *accessed);
+    int events = 0;
+    struct parrot_watch *accessed = malloc(sizeof *accessed);
     if (accessed == NULL) {
         log_error(__FILE__, "parse_events", "malloc", __LINE__, errno);
         goto stop_events;
