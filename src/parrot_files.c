@@ -16,24 +16,21 @@
 
 void find_file(struct parrot_watch *accessed)
 {
-    char *backupname;
-    int backup_err;
+    char *backupname = create_pathname(accessed->backup_path, accessed->evfile,
+                                       accessed->backup_path_len);
 
-    backupname = create_pathname(accessed->backup_path, accessed->evfile,
-                                 accessed->backup_path_len);
-    backup_err = backup_files(accessed->watch_path, backupname);
-    if (backup_err)
+    int backup_err = backup_files(accessed->watch_path, backupname);
+    free(backupname)
+
+    if (backup_err) 
         log_error(__FILE__, "find_file", "backup_files", __LINE__, errno);
-    else {
-        char *fmt = fmt_event(2);
-        char *logevent_buffer;
-        EVENT(&logevent_buffer, fmt, "backing up => ", accessed->evfile);
-        log_event(logevent_buffer);
-        free(fmt);
-        free(logevent_buffer);
-    }
 
-    free(backupname);
+    char *fmt = fmt_event(2);
+    char *logevent_buffer;
+    EVENT(&logevent_buffer, fmt, "backing up => ", accessed->evfile);
+    log_event(logevent_buffer);
+    free(fmt);
+    free(logevent_buffer);
 }
 
 void find_files(struct parrot_watch *accessed)
@@ -118,16 +115,20 @@ int backup_files(char *file_path, char *backup_path)
     void *fd_buffer = malloc(sizeof(char) * file_size);
     if (fd_buffer == NULL) {
         log_error(__FILE__, "backup_files", "malloc", __LINE__, errno);
+        close(r_file);
         return errno;
     }
 
     if ((f_read = read(r_file, fd_buffer, file_size)) == -1) {
         log_error(__FILE__, "backup_files", "read", __LINE__, errno);
+        close(r_file);
         return errno;
     }
 
     if ((w_file = open(backup_path, O_CREAT | O_RDWR, f_buffer.st_mode)) == -1) {
         log_error(__FILE__, "backup_files", "open", __LINE__, errno);
+        close(r_file);
+        close(r_read);
         return errno;
     }
 
@@ -137,6 +138,7 @@ int backup_files(char *file_path, char *backup_path)
 
     close(w_file);
     close(r_file);
+    close(r_read);
 
     free(fd_buffer);
 
