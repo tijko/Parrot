@@ -19,11 +19,10 @@ void find_file(struct parrot_watch *accessed)
     char *backupname = create_pathname(accessed->backup_path, accessed->evfile,
                                        accessed->backup_path_len);
 
-    int backup_err = backup_files(accessed->watch_path, backupname);
-    free(backupname);
-
-    if (backup_err) 
+    if (backup_files(accessed->watch_path, backupname)) {
+        free(backupname);
         log_error(__FILE__, "find_file", "backup_files", __LINE__, errno);
+    }
 
     char *fmt = fmt_event(2);
     char *logevent_buffer;
@@ -38,24 +37,19 @@ void find_files(struct parrot_watch *accessed)
     char *pathname, *backupname;
     DIR *drect;
     
-    size_t dirent_size = offsetof(struct dirent, d_name) + MAX_PATH + 1;
-    struct dirent *dir_results;
-    struct dirent *dir_entries = malloc(sizeof(char) * dirent_size);
+    struct dirent *dir_entry;
 
     if ((drect = opendir(accessed->watch_path)) == NULL) 
         log_error(__FILE__, "find_file", "opendir", __LINE__, errno);
 
-    while ((readdir_r(drect, dir_entries, &dir_results)) != -1) {
+    while ((dir_entry = readdir(drect))) {
 
-        if (dir_results == NULL)
-            break;
-
-        if (dir_entries->d_type == DT_REG && 
-            !strcmp(dir_entries->d_name, accessed->evfile)) {
-            pathname = create_pathname(accessed->watch_path, dir_entries->d_name,
+        if (dir_entry->d_type == DT_REG && 
+            !strcmp(dir_entry->d_name, accessed->evfile)) {
+            pathname = create_pathname(accessed->watch_path, dir_entry->d_name,
                                        strlen(accessed->watch_path) + 1);
             backupname = create_pathname(accessed->backup_path, 
-                                         dir_entries->d_name, 
+                                         dir_entry->d_name, 
                                          accessed->backup_path_len);
             if (backup_files(pathname, backupname))
                 log_error(__FILE__, "find_files", "backup_files", 
@@ -63,7 +57,7 @@ void find_files(struct parrot_watch *accessed)
             else {
                 char *fmt = fmt_event(2);
                 char *logevent_buffer;
-                EVENT(&logevent_buffer, fmt, "backingup => ", dir_entries->d_name);
+                EVENT(&logevent_buffer, fmt, "backingup => ", dir_entry->d_name);
                 log_event(logevent_buffer);
                 free(fmt);
                 free(logevent_buffer);
@@ -74,15 +68,13 @@ void find_files(struct parrot_watch *accessed)
        }
     }
 
-    free(dir_entries);
     closedir(drect);
 }
 
 char *create_pathname(char *dirname, char *filename, size_t pathsize)
 {
     char *pathname;
-    size_t pathname_size;
-    pathname_size = strlen(filename) + pathsize;
+    size_t pathname_size = strlen(filename) + pathsize;
     if ((pathname = malloc(sizeof(char) * pathname_size)) == NULL) {
         log_error(__FILE__, "create_pathname", "malloc", __LINE__, errno);
         return NULL;
@@ -155,11 +147,10 @@ void set_parrot_lock(int fd)
 
     while ( 1 ) {
 
-        int ret = fcntl(fd, F_GETLK, &parrot_lock);
-
-        if (ret < 0)
+        if (fcntl(fd, F_GETLK, &parrot_lock) < 0) {
+            log_error(__FILE__, "set_parrot_lock", "fcntl", __LINE__, errno);
             return;
-        // handle errors
+        }
 
         if (parrot_lock.l_type == F_UNLCK) {
             parrot_lock.l_type = F_WRLCK;
