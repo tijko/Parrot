@@ -1,7 +1,5 @@
 #define _GNU_SOURCE
 
-#include <errno.h>
-#include <unistd.h>
 #include <dbus/dbus-glib.h>
 #include <dbus/dbus-glib-bindings.h>
 

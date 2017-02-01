@@ -1,6 +1,4 @@
-#include <errno.h>
 #include <stdarg.h>
-#include <stdlib.h>
 #include <systemd/sd-journal.h>
 
 #include "../parrot.h"

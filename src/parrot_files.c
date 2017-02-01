@@ -1,15 +1,8 @@
 #define _GNU_SOURCE
 
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <limits.h>
 #include <stddef.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 
 #include "parrot.h"
 

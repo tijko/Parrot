@@ -4,9 +4,15 @@
 #define PARROT_H
 
 #include <glib.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <stdbool.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
 

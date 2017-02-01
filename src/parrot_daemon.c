@@ -1,12 +1,3 @@
-#include <fcntl.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
 #include "parrot.h"
 
 
