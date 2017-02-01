@@ -12,7 +12,7 @@ int notify_parrot_init(void)
     struct ParrotGDBusObj *parrot_gdbus_obj;
     pthread_t parrot_dbus;
 
-    log_event("initializing parrot loop");
+    EVENT("%s", "initializing parrot loop");
 
     parrot_gdbus_obj = malloc(sizeof *parrot_gdbus_obj);
     if (parrot_gdbus_obj == NULL) {
@@ -47,7 +47,7 @@ void parrot_cleanup(struct ParrotGDBusObj *parrot_gdbus_obj)
     dbus_connection_unref(parrot_gdbus_obj->dconn);
     g_object_unref(parrot_gdbus_obj->p_obj);
     free(parrot_gdbus_obj);
-    log_event("clean up and close connections");
+    EVENT("%s", "clean up and close connections");
 }
 
 void close_watch(struct parrot_watch *watch)
@@ -190,17 +190,7 @@ int parrot_add_watch(char *watch_path, char *backup_path, int watch_mask)
 
     current_watch[watch_num++] = new_watch;
 
-    char *fmt = fmt_event(2);
-    if (fmt == NULL)
-        return 0;
-
-    char *logevent_buffer;
-
-    EVENT(&logevent_buffer, fmt, "watch added => ", watch_path);
-
-    log_event(logevent_buffer);
-    free(fmt);
-    free(logevent_buffer);
+    EVENT("%s%s", "watch added => ", watch_path);
 
     return 0;
 }
@@ -213,14 +203,7 @@ void parrot_remove_watch(char *watch_path)
         if (!strcmp(watch_path, current_watch[watch]->watch_path)) {
             close_watch(current_watch[watch]);
             current_watch[watch] = NULL;
-            char *fmt = fmt_event(2);
-            if (fmt == NULL)
-                return;
-            char *logevent_buffer;
-            EVENT(&logevent_buffer, fmt, "watch removed => ", watch_path);
-            log_event(logevent_buffer);
-            free(fmt);
-            free(logevent_buffer);
+            EVENT("%s%s", "watch removed => ", watch_path);
             for (idx=watch; watch < watch_num; watch++) 
                 if (current_watch[watch])
                     current_watch[idx++] = current_watch[watch];
@@ -293,25 +276,14 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
                     accessed->evfile = malloc(sizeof(char) * 
                                               strlen(event->name) + 1);
                     strcpy(accessed->evfile, event->name);
-                    char *fmt = fmt_event(2);
-                    char *logevent_buffer;
-                    EVENT(&logevent_buffer, fmt, "event => ", accessed->evfile);
-                    log_event(logevent_buffer);
-                    free(fmt);
-                    free(logevent_buffer);
+                    EVENT("%s%s", "event => ", accessed->evfile);
                 } else {
                     if (current_watch[cur_watch]->watch_flag & W_FLAG) {
                         current_watch[cur_watch]->watch_flag ^= W_FLAG;
                         goto stop_events;
                     } else {
                         current_watch[cur_watch]->watch_flag |= W_FLAG;
-                        char *fmt = fmt_event(2);
-                        char *logevent_buffer;
-                        EVENT(&logevent_buffer, fmt, "event => ", 
-                                                 accessed->evfile);
-                        log_event(logevent_buffer);
-                        free(fmt);
-                        free(logevent_buffer);
+                        EVENT("%s%s", "event => ", accessed->evfile);
                     }
                 }
 

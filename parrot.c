@@ -1,8 +1,6 @@
-#include <errno.h>
-#include <unistd.h>
-#include <signal.h>
-#include <stdbool.h>
+#define _GNU_SOURCE
 
+#include <signal.h>
 #include "src/parrot.h"
 
 
@@ -15,6 +13,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     
+    event_log_buf = NULL;
     int notify_flag = parrot_daemon();
 
     if (notify_flag == -1) {
@@ -36,7 +35,8 @@ void cleanup(int signal_number, siginfo_t *sigaction_info, void *ctxt)
     running = false;
     sleep(1); // a small sleep to allow enough time for cleanup.
 
-    log_event("signal interrupt");
-
+    EVENT("%s", "signal interrupt");
+    if (event_log_buf)
+        free(event_log_buf);
     raise(signal_number);
 }

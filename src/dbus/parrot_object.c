@@ -119,12 +119,7 @@ void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj)
     } else {
         addr = getenv("DBUS_SESSION_BUS_ADDRESS");
         if (addr) {
-            char *fmt = fmt_event(2);
-            char *logevent_buffer;
-            EVENT(&logevent_buffer, fmt, "aquired bus address => ", addr);
-            log_event(logevent_buffer);
-            free(fmt);
-            free(logevent_buffer);
+            EVENT("%s%s", "aquired bus address => ", addr);
         } else
             log_error(__FILE__, "register_parrot_obj", 
                       "getenv", __LINE__, errno);

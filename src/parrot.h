@@ -9,11 +9,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dbus/dbus.h>
+#include <systemd/sd-journal.h>
 #include <dbus/dbus-glib-lowlevel.h>
 
 bool running;
@@ -162,15 +164,13 @@ int events_in(int highest_fd, fd_set *watchfds);
 void log_error(const char *file_name, const char *func, 
                const char *call, int line, int error); 
 
-#define FMT "\%s"
-#define FMTSIZE 4
+char *event_log_buf;
 
-char *fmt_event(int descriptors);
-
-#define EVENT(buf, fmt, ...) asprintf(buf, fmt, __VA_ARGS__)
-
-// Logs any event and the mask of that event to the parrot log.
-void log_event(char *event_msg);
+#define EVENT(fmt, ...)                                            \
+    do {                                                           \
+        asprintf(&event_log_buf, fmt, __VA_ARGS__);                \
+        sd_journal_print(LOG_INFO, "PARROT: %s\n", event_log_buf); \
+    } while (1)                                                    \
 
 // Signal handler to complete cleanup if any interrupts are received.
 void cleanup(int signal_number, siginfo_t *sigaction_info, void *ctxt);
