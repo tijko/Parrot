@@ -75,12 +75,10 @@ void parrot_mainloop(struct ParrotGDBusObj *parrot_gdbus_obj)
 
         if (change == -1) {
             log_error(__FILE__, "parrot_mainloop", "events_in", __LINE__, errno);
-            return;
         } else if (change) {
             if ((status = read(parrot_inotify_instance, 
                                    buffer, EVT_BUF_SIZE - 1)) < 0) {
                 log_error(__FILE__, "parrot_mainloop", "read", __LINE__, errno);
-                return;
             }
 
             parse_events(status, buffer, parrot_gdbus_obj->p_obj);
@@ -246,11 +244,7 @@ int events_in(int highest_fd, fd_set *watchfds)
 
 void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
 {
-    int cur_watch;
-    struct inotify_event *event;
-
     void *backup;
-    time_t access_time;
 
     pthread_t backup_file;
 
@@ -262,12 +256,12 @@ void parse_events(int e_status, char e_buf[], ParrotObject *p_obj)
     }
 
     while (events < e_status) { 
-        event = (struct inotify_event *) &e_buf[events];
-        access_time = time(NULL);
+        struct inotify_event *event = (struct inotify_event *) &e_buf[events];
+        time_t access_time = time(NULL);
         if (event->mask != IN_ACCESS) 
             goto stop_events;            
 
-        for (cur_watch=0; cur_watch < watch_num; cur_watch++) {
+        for (int cur_watch=0; cur_watch < watch_num; cur_watch++) {
             if (current_watch[cur_watch]->parrot_wd == event->wd) {
                 memcpy(accessed, current_watch[cur_watch], sizeof(*accessed));
                 if (!(accessed->watch_type & W_FIL)) {
