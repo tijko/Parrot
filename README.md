@@ -3,7 +3,7 @@ Parrot
 
 Parrot is a service that backs up files from a monitored file/directory.
 
-####description
+#### Description
 
 Parrot runs as a systemd user service and also as a dbus service.  Parrot's dbus 
 service capabilities offer signals and methods that allow you to remotely set 
@@ -34,7 +34,7 @@ easily be logged in whatever form needed or some other form of action can be
 take place such as callbacks to extend any additional functionality that might
 be called for.
 
-####install
+#### Install
 
 GCC is required to compile, to install run in the base directory:
 
