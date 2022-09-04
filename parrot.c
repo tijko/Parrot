@@ -14,13 +14,14 @@ int main(int argc, char *argv[]) {
     }
     
     event_log_buf = NULL;
+    
     int notify_flag = parrot_daemon();
 
     if (notify_flag == -1) {
         log_error(__FILE__, "main", "parrot_daemon", __LINE__, errno);
         return 0;
     }
-
+    
     running = true;
     notify_flag = notify_parrot_init();
 
