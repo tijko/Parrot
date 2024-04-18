@@ -103,9 +103,9 @@ gboolean parrot_obj_remove_watch(ParrotObject *p_obj, char *watch,
 
 struct ParrotGDBusObj {
     GMainLoop *mainloop;
-    DBusGConnection *conn;
+    GDBusGConnection *conn;
     DBusConnection *dconn;
-    DBusGProxy *proxy;
+    GDBusGProxy *proxy;
     ParrotObject *p_obj;
 };
 

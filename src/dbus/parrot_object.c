@@ -40,8 +40,8 @@ static void parrot_obj_class_init(ParrotObjectClass *klass)
 {
     signals[NOTIFY_SIGNAL] =
         g_signal_new("accessed", G_OBJECT_CLASS_TYPE (klass),
-        G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED, 0, NULL, NULL,
-        g_cclosure_marshal_VOID__INT, G_TYPE_NONE, 1, G_TYPE_INT);
+        G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED, 0, void, void,
+        g_cclosure_marshal_VOID__INT, G_TYPE_VOID, 1, G_TYPE_INT);
 }
 
 gboolean parrot_obj_accessed(ParrotObject *p_obj, int access_time)
@@ -111,11 +111,11 @@ void register_parrot_obj(struct ParrotGDBusObj *parrot_gdbus_obj)
                                     &dbus_glib_parrot_obj_object_info);
 
     err = NULL;
-    parrot_gdbus_obj->conn = dbus_g_bus_get(DBUS_BUS_SESSION, &err);
+    parrot_gdbus_obj->conn = g_bus_get(DBUS_BUS_SESSION, &err);
     
     if (err != NULL) {
         log_error(__FILE__, "register_parrot_obj", 
-                  "dbus_g_bus_get", __LINE__, err->code);
+                  "g_bus_get", __LINE__, err->code);
     } else {
         addr = getenv("DBUS_SESSION_BUS_ADDRESS");
         if (addr) {
